@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "342851462550",
+    "firebase_url": "https://instantmudra-1531463630570.firebaseio.com",
+    "project_id": "instantmudra-1531463630570",
+    "storage_bucket": "instantmudra-1531463630570.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:342851462550:android:fa8432870f4c7f852229b7",
+        "android_client_info": {
+          "package_name": "com.instantmudra"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA5puIMEb4FNH6Yb4L6xIblU57uh1BVHY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "342851462550-87hjtrmmidlf964us6h8btvpe4i5okpp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

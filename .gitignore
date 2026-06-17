@@ -35,6 +35,15 @@ local.properties
 !debug.keystore
 .kotlin/
 
+# Android build artifacts and large generated files
+**/.gradle/
+**/.cxx/
+**/build/
+*.apk
+*.aab
+*.dex
+*.so
+
 # node.js
 #
 node_modules/
