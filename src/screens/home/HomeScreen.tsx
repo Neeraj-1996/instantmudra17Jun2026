@@ -10,7 +10,7 @@ import {
     Alert,
 } from "react-native";
 import HomeStyle from "./Home.style";
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import HomeFooter from "../../components/footer/HomeFooter";
 import SlidMain from "../../components/slideMain/SlidMain";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -138,58 +138,66 @@ const Home: React.FC<any> = ({ navigation }: any) => {
     };
 
 
-    useEffect(() => {
-        console.log("loanStatus", loanStatus);
-        if (
-            loanStatus?.loan_status === "Sanction"
-            //  && loanStatus?.bank_verified === "0"
-        ) {
-            setShowBankModal(true);
-            takeAccountDetail();
-            setBankForm({
-                accountHolder: loanStatus?.bank_details?.account_holder || "",
-                accountNumber: loanStatus?.bank_details?.account_number || "",
-                ifsc: loanStatus?.bank_details?.ifsc || "",
-                bankName: loanStatus?.bank_details?.bank_name || "",
-            });
-        }
-    }, [loanStatus]);
+    useFocusEffect(
+        React.useCallback(() => {
+            if (loanStatus?.loan_status === "Sanction") {
+                if (loanStatus?.bank_status === "0") {
+                    setShowBankModal(true);
 
-    const handleVerifyBank = async (
-        verification_id: "1" | "0"
-    ) => {
+                    takeAccountDetail();
+
+                    setBankForm({
+                        accountHolder:
+                            loanStatus?.bank_details?.account_holder || "",
+                        accountNumber:
+                            loanStatus?.bank_details?.account_number || "",
+                        ifsc:
+                            loanStatus?.bank_details?.ifsc || "",
+                        bankName:
+                            loanStatus?.bank_details?.bank_name || "",
+                    });
+                } else {
+                    setShowBankModal(false);
+                }
+            } else {
+                setShowBankModal(false);
+            }
+        }, [loanStatus])
+    );
+
+    const handleVerifyBank = async (verification_id: "1" | "2") => {
         setIsBankVerifying(true);
-
-        const payload = {
-            account_number: bankForm.accountNumber,
-            order_id: loanStatus?.order_id,
-            verification_id, // "1" = Verify, "0" = Cancel
-        };
 
         try {
             const res = await dispatch(
-                BankAccountVerify(payload)
+                BankAccountVerify({
+                    account_number: bankForm.accountNumber,
+                    order_id: loanStatus?.order_id,
+                    verification_id,
+                })
             );
 
-            if (BankAccountVerify.fulfilled.match(res)) {
-                setShowBankModal(false);
-                dispatch(getLoanStatus());
-            } else {
-                console.log("Verification failed", res.payload);
+            const response = res.payload as {
+                status?: boolean;
+                bank_status?: string;
+                message?: string;
+            };
 
-                const errorPayload = res.payload as {
-                    status?: boolean;
-                    message?: string;
-                };
+            console.log("Bank verification response:", response);
 
+            // Only status 0 keeps modal open
+            setShowBankModal(response?.bank_status === "0");
+
+            if (response?.bank_status === "3") {
                 Alert.alert(
                     "Verification Failed",
-                    errorPayload?.message ||
-                    "Bank account verification failed"
+                    response?.message || "Bank account verification failed"
                 );
             }
+
+            dispatch(getLoanStatus());
         } catch (error) {
-            console.log("Bank verification error", error);
+            console.log("Bank verification error:", error);
 
             Alert.alert(
                 "Verification Failed",
@@ -259,21 +267,6 @@ const Home: React.FC<any> = ({ navigation }: any) => {
             setActiveLoan(activeLoanData);
         }
     };
-
-    // const handleActiveLoan = async () => {
-    //     const orderId = loanStatus?.order_id;
-
-    //     if (!orderId) {
-    //         console.log("Order ID missing");
-    //         return;
-    //     }
-
-    //     const res = await dispatch(getCurrentActiveLoan(orderId));
-    //     console.log("res", res);
-    //     if (getCurrentActiveLoan.fulfilled.match(res)) {
-    //         setActiveLoan(res.payload.data);
-    //     }
-    // };
 
 
 
@@ -564,7 +557,7 @@ const Home: React.FC<any> = ({ navigation }: any) => {
 
             <BankVerificationModal
                 visible={showBankModal}
-                onClose={() => handleVerifyBank("0")}
+                onClose={() => handleVerifyBank("2")}
                 bankForm={bankForm}
                 setBankForm={setBankForm}
                 onVerify={() => handleVerifyBank("1")}

@@ -82,8 +82,8 @@ android {
         applicationId "com.instantmudra"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6802
-        versionName "68.0.2"
+        versionCode 6803
+        versionName "68.0.3"
     }
     signingConfigs {
         debug {

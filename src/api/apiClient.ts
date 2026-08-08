@@ -21,7 +21,7 @@ apiClient.interceptors.request.use(
             // 2. Fallback to AsyncStorage
             const storageToken = await AsyncStorage.getItem("authToken");
             const token = reduxToken || storageToken;
-            console.log("Token in API Client:", token);
+            // console.log("Token in API Client:", token);
             // console.log(
             //     `[API REQUEST] ${config.method?.toUpperCase()} ${config.url}`,
             //     "Token:",

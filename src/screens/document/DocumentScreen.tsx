@@ -75,33 +75,6 @@ const DocumentScreen: React.FC = ({ navigation, route }: any) => {
             console.log('Cancelled or error', err);
         }
     };
-    // const pickDocument = async (type: 'bank' | 'salary') => {
-    //     try {
-    //         const result = await pick({
-    //             type: ['application/pdf'],
-    //             allowMultiSelection: type === 'salary',
-    //         });
-
-    //         if (type === 'bank') {
-    //             setBankStatement(result[0]);
-    //         }
-    //     } catch (err) {
-    //         console.log('User cancelled or error', err);
-    //     }
-    // };
-
-    // const pickSalarySlip = async (setFile: any) => {
-    //     try {
-    //         const result = await pick({
-    //             type: ['application/pdf'],
-    //         });
-
-    //         setFile(result[0]);
-
-    //     } catch (err) {
-    //         console.log('Cancelled or error', err);
-    //     }
-    // };
 
 
     const handleNext = () => {
@@ -156,7 +129,7 @@ const DocumentScreen: React.FC = ({ navigation, route }: any) => {
                 );
             })
             .catch((err) => {
-                console.log("Loan Apply Error:", err);
+                // console.log("Loan Apply Error:", err);
 
                 Alert.alert(
                     "Submission Failed",
@@ -167,71 +140,6 @@ const DocumentScreen: React.FC = ({ navigation, route }: any) => {
                 );
             });
     };
-    // const handleNext = () => {
-    //     let newErrors: any = {};
-
-    //     if (!selfie) newErrors.selfie = true;
-    //     if (!bankStatement) newErrors.bank = true;
-
-    //     if (!salarySlip1 && !salarySlip2 && !salarySlip3) {
-    //         newErrors.salary = true;
-    //     }
-
-    //     setErrors(newErrors);
-
-    //     if (Object.keys(newErrors).length > 0) return;
-
-    //     // DISPATCH API
-    //     dispatch(
-    //         submitLoanDocuments({
-    //             loanAmount: loanAmount, // pass from previous screen ideally
-    //             bankStatement,
-    //             salarySlip1,
-    //             salarySlip2,
-    //             salarySlip3,
-    //             selfie,
-    //             bankStatementPin,
-    //             salarySlipPin,
-    //         })
-    //     )
-    //         .unwrap()
-    //         .then((res) => {
-    //             // console.log("SUCCESS:", res);
-
-    //             if (
-    //                 res?.status === true &&
-    //                 res?.message === "Loan apply response submitted"
-    //             ) {
-    //                 navigation.replace("SuccessScreen", {
-    //                     orderId: res?.data?.order_id || "",
-    //                 });
-    //             } else {
-    //                 Alert.alert(
-    //                     "Submission Failed",
-    //                     "Something went wrong. Please resubmit the form.",
-    //                     [
-    //                         {
-    //                             text: "OK",
-    //                         },
-    //                     ]
-    //                 );
-    //             }
-    //         })
-    //         .catch((err) => {
-    //             // console.log("ERROR:", err);
-
-    //             Alert.alert(
-    //                 "Submission Failed",
-    //                 err || "Something went wrong. Please resubmit the form.",
-    //                 [
-    //                     {
-    //                         text: "Retry",
-    //                     },
-    //                 ]
-    //             );
-    //         });
-    // };
-
 
 
     return (

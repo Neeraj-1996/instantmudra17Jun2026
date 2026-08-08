@@ -188,7 +188,7 @@ const usePermissions = () => {
 
                 const result = await launchCamera({
                     mediaType: "photo",
-                    quality: 0.8,
+                    quality: 0.5,
                     saveToPhotos: true,
                     cameraType: "front",
                     ...options,
