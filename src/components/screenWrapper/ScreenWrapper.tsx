@@ -29,6 +29,7 @@ interface Props {
     onBackPress?: () => void;
     useBackground?: boolean;
     enableReviewModal?: boolean;
+    disableTopSafeArea?: boolean;
 }
 
 const ScreenWrapper: React.FC<Props> = ({
@@ -42,6 +43,7 @@ const ScreenWrapper: React.FC<Props> = ({
     onBackPress,
     useBackground = true,
     enableReviewModal = false,
+    disableTopSafeArea = false,
 }) => {
     const navigation = useNavigation();
 
@@ -107,10 +109,13 @@ const ScreenWrapper: React.FC<Props> = ({
 
     return (
         <>
-            <SafeAreaView style={[
-                styles.safeArea,
-                useBackground ? { backgroundColor } : null,
-            ]}>
+            <SafeAreaView
+                edges={disableTopSafeArea ? ["left", "right", "bottom"] : ["top", "left", "right", "bottom"]}
+                style={[
+                    styles.safeArea,
+                    useBackground ? { backgroundColor } : null,
+                ]}
+            >
 
                 <StatusBar
                     backgroundColor={useBackground ? backgroundColor : "transparent"}

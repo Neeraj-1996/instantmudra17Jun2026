@@ -5,12 +5,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import { initialState } from "../types/user.types";
 import { userExtraReducers } from "../extraReducers/user.extraReducers";
-
 export const sendOtp = createAsyncThunk(
     "user/sendOtp",
     async (
         data: {
             phone: string;
+            email: string;
             full_name?: string;
             gender?: string;
         },
@@ -19,24 +19,29 @@ export const sendOtp = createAsyncThunk(
         try {
             const payload: any = {
                 phone: data.phone,
+                email: data.email,
             };
 
             if (data.full_name) payload.full_name = data.full_name;
             if (data.gender) payload.gender = data.gender;
 
+            console.log("Send OTP Request:", payload);
+
             const response = await apiClient.post(
                 ENDPOINTS.SEND_OTP,
                 payload
             );
+
+            console.log("Send OTP Response:", response.data);
             return response.data;
         } catch (error: any) {
+            console.log("Send OTP Error:", error);
             return rejectWithValue(
                 error?.response?.data || "Send OTP failed"
             );
         }
     }
 );
-
 export const verifyOtp = createAsyncThunk(
     "user/verifyOtp",
     async (data: { phone: string; otp: string }) => {
@@ -83,7 +88,6 @@ export const submitKyc = createAsyncThunk(
     "user/submitKyc",
     async (data: any, { rejectWithValue }) => {
         try {
-            // Get token from AsyncStorage
             const token = await AsyncStorage.getItem("accessToken");
 
             const formData = new FormData();
@@ -95,43 +99,126 @@ export const submitKyc = createAsyncThunk(
             formData.append("city", data.city);
             formData.append("pin_code", data.pincode);
             formData.append("address", data.address);
-            formData.append("state", data.address);
+            formData.append("state", data.state);
 
-            formData.append("pan_card", {
-                uri: data.panImage.uri,
-                type: data.panImage.type,
-                name: sanitizeFileName(data.panImage.name),
-            } as any);
+            if (data.panImage) {
+                formData.append("pan_card", {
+                    uri: data.panImage.uri,
+                    type: data.panImage.type,
+                    name: sanitizeFileName(data.panImage.name),
+                } as any);
+            }
 
-            formData.append("aadhaar_front", {
-                uri: data.aadhaarFront.uri,
-                type: data.aadhaarFront.type,
-                name: sanitizeFileName(data.aadhaarFront.name),
-            } as any);
+            if (data.aadhaarFront) {
+                formData.append("aadhaar_front", {
+                    uri: data.aadhaarFront.uri,
+                    type: data.aadhaarFront.type,
+                    name: sanitizeFileName(data.aadhaarFront.name),
+                } as any);
+            }
 
-            formData.append("aadhaar_back", {
-                uri: data.aadhaarBack.uri,
-                type: data.aadhaarBack.type,
-                name: sanitizeFileName(data.aadhaarBack.name),
-            } as any);
+            if (data.aadhaarBack) {
+                formData.append("aadhaar_back", {
+                    uri: data.aadhaarBack.uri,
+                    type: data.aadhaarBack.type,
+                    name: sanitizeFileName(data.aadhaarBack.name),
+                } as any);
+            }
+
+
+            console.log("========== FormData ==========");
+
+            if ((formData as any)._parts) {
+                (formData as any)._parts.forEach(
+                    ([key, value]: [string, any]) => {
+                        console.log(
+                            key,
+                            typeof value === "object"
+                                ? JSON.stringify(value, null, 2)
+                                : value
+                        );
+                    }
+                );
+            }
+
+            console.log("==============================");
 
             const response = await apiClient.post("/kyc", formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data",
                 },
+                transformRequest: (data) => data,
             });
+
             console.log("KYC submission response:", response.data);
             return response.data;
         } catch (error: any) {
-            console.log("KYC submission error:", error);
+            console.log(
+                "KYC submission error:",
+                error.response?.data || error.message
+            );
 
             return rejectWithValue(
-                error?.response?.data || "KYC submission failed"
+                error.response?.data || "KYC submission failed"
             );
         }
     }
 );
+
+// export const submitKyc = createAsyncThunk(
+//     "user/submitKyc",
+//     async (data: any, { rejectWithValue }) => {
+//         try {
+//             // Get token from AsyncStorage
+//             const token = await AsyncStorage.getItem("accessToken");
+
+//             const formData = new FormData();
+
+//             formData.append("pan_number", data.pan);
+//             formData.append("aadhaar_number", data.aadhaar);
+//             formData.append("email", data.email);
+//             formData.append("alternate_mobile", data.mobile);
+//             formData.append("city", data.city);
+//             formData.append("pin_code", data.pincode);
+//             formData.append("address", data.address);
+//             formData.append("state", data.address);
+
+//             formData.append("pan_card", {
+//                 uri: data.panImage.uri,
+//                 type: data.panImage.type,
+//                 name: sanitizeFileName(data.panImage.name),
+//             } as any);
+
+//             formData.append("aadhaar_front", {
+//                 uri: data.aadhaarFront.uri,
+//                 type: data.aadhaarFront.type,
+//                 name: sanitizeFileName(data.aadhaarFront.name),
+//             } as any);
+
+//             formData.append("aadhaar_back", {
+//                 uri: data.aadhaarBack.uri,
+//                 type: data.aadhaarBack.type,
+//                 name: sanitizeFileName(data.aadhaarBack.name),
+//             } as any);
+
+//             const response = await apiClient.post("/kyc", formData, {
+//                 headers: {
+//                     Authorization: `Bearer ${token}`,
+//                     "Content-Type": "multipart/form-data",
+//                 },
+//             });
+//             console.log("KYC submission response:", response.data);
+//             return response.data;
+//         } catch (error: any) {
+//             console.log("KYC submission error:", error);
+
+//             return rejectWithValue(
+//                 error?.response?.data || "KYC submission failed"
+//             );
+//         }
+//     }
+// );
 
 
 export const submitEmployment = createAsyncThunk(
@@ -170,7 +257,7 @@ export const getLoanCalculation = createAsyncThunk(
                     loan_amount: loan_amount.toString()
                 }
             );
-
+            console.log("Loan Calculation Response:", response.data);
             return response.data.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -683,6 +770,38 @@ export const checkAppUpdate = createAsyncThunk(
         };
     }
 );
+
+export const getAccountDetail = createAsyncThunk(
+    "user/getAccountDetail",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get("/bank-account-details");
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(
+                error?.response?.data || "Failed to fetch DigiLocker URL"
+            );
+        }
+    }
+);
+
+
+export const BankAccountVerify = createAsyncThunk(
+    "user/bankAccountVerify",
+    async (payload: { account_number: string; order_id: string; verification_id: string }, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.post(ENDPOINTS.BANK_ACCOUNT_VERIFICATION, payload,);
+            console.log("Bank Account Verification Response:", response.data);
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(
+                error?.response?.data || "Failed to post account verification"
+            );
+        }
+    }
+);
+
+
 
 const userSlice = createSlice({
     name: "user",

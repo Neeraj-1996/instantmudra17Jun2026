@@ -7,6 +7,7 @@ import {
     Image,
     Linking,
     TouchableOpacity,
+    Alert,
 } from "react-native";
 import HomeStyle from "./Home.style";
 import { useIsFocused } from "@react-navigation/native";
@@ -15,18 +16,21 @@ import SlidMain from "../../components/slideMain/SlidMain";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GradientBackground from "../../components/gradient/GradinetBackgorund";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { getCurrentActiveLoan, getLoanStatus, getNotifications, getUserDetail, getZoopESignUrl } from "../../redux/slices/userSlice";
+import { BankAccountVerify, getAccountDetail, getCurrentActiveLoan, getLoanStatus, getNotifications, getUserDetail, getZoopESignUrl } from "../../redux/slices/userSlice";
 import { BellIcon, Rejected, HeadsetIcon } from "../../assets/images";
 import { getDigiLockerUrl } from "../../redux/slices/userSlice";
 import GradientButton from "../../components/button/Button";
 import moment from "moment";
 import { Colors } from "../../styles/colors";
+import BankVerificationModal from "./verifyBankDetail/BankVerificationModal";
 const STEPS = [
     "Loan Applied",
     "On Process",
     "Approved",
     "Disbursed",
 ];
+
+
 
 const LoanListArray = [
     {
@@ -105,6 +109,96 @@ const Home: React.FC<any> = ({ navigation }: any) => {
     const isLoanLoaded = !!loanStatus;
     const isDisbursed = ["Disbursed", "Settled"].includes(loanStatus?.loan_status);
     const isActiveLoanLoaded = !!activeLoan;
+
+    const [showBankModal, setShowBankModal] = useState(false);
+    const [isBankVerifying, setIsBankVerifying] = useState(false);
+
+    const [bankForm, setBankForm] = useState({
+        accountHolder: "",
+        accountNumber: "",
+        ifsc: "",
+        bankName: "",
+    });
+
+    const takeAccountDetail = async () => {
+        const res = await dispatch(getAccountDetail());
+
+        // console.log("res account detail", res);
+
+        if (getAccountDetail.fulfilled.match(res)) {
+            const account = res.payload?.data;
+
+            setBankForm({
+                accountHolder: account?.account_holder_name || "",
+                accountNumber: account?.account_number || "",
+                ifsc: account?.ifsc_code || "",
+                bankName: account?.bank_name || "",
+            });
+        }
+    };
+
+
+    useEffect(() => {
+        console.log("loanStatus", loanStatus);
+        if (
+            loanStatus?.loan_status === "Sanction"
+            //  && loanStatus?.bank_verified === "0"
+        ) {
+            setShowBankModal(true);
+            takeAccountDetail();
+            setBankForm({
+                accountHolder: loanStatus?.bank_details?.account_holder || "",
+                accountNumber: loanStatus?.bank_details?.account_number || "",
+                ifsc: loanStatus?.bank_details?.ifsc || "",
+                bankName: loanStatus?.bank_details?.bank_name || "",
+            });
+        }
+    }, [loanStatus]);
+
+    const handleVerifyBank = async (
+        verification_id: "1" | "0"
+    ) => {
+        setIsBankVerifying(true);
+
+        const payload = {
+            account_number: bankForm.accountNumber,
+            order_id: loanStatus?.order_id,
+            verification_id, // "1" = Verify, "0" = Cancel
+        };
+
+        try {
+            const res = await dispatch(
+                BankAccountVerify(payload)
+            );
+
+            if (BankAccountVerify.fulfilled.match(res)) {
+                setShowBankModal(false);
+                dispatch(getLoanStatus());
+            } else {
+                console.log("Verification failed", res.payload);
+
+                const errorPayload = res.payload as {
+                    status?: boolean;
+                    message?: string;
+                };
+
+                Alert.alert(
+                    "Verification Failed",
+                    errorPayload?.message ||
+                    "Bank account verification failed"
+                );
+            }
+        } catch (error) {
+            console.log("Bank verification error", error);
+
+            Alert.alert(
+                "Verification Failed",
+                "Something went wrong. Please try again."
+            );
+        } finally {
+            setIsBankVerifying(false);
+        }
+    };
 
     useEffect(() => {
         setTimeout(() => {
@@ -222,13 +316,9 @@ const Home: React.FC<any> = ({ navigation }: any) => {
 
             {/* HEADER */}
             <GradientBackground style={HomeStyle.header}>
-
-
-
                 <View style={HomeStyle.headerTop}>
                     <SafeAreaView>
                         <Text style={HomeStyle.greeting}>
-                            {/* Hello, {userName} */}
                             Hello, {userDetail?.full_name || "User"}
                         </Text>
                     </SafeAreaView>
@@ -447,15 +537,55 @@ const Home: React.FC<any> = ({ navigation }: any) => {
                                                                     </View>
                                                                 )}
                                                             </View>
-                                                            {/* LEFT: PROCESSING BADGE */}
-                                                            {/* <View style={HomeStyle.activeBadge}>
+
+
+                                                        </View>
+                                                    )}
+                                                </View>
+                                            </View>
+                                        );
+                                    })}
+                                </View>
+                            </>
+                        )}
+                    </>
+                )}
+            </ScrollView>
+
+            {/* FOOTER */}
+            <HomeFooter
+                selectedBottomTab={selectedBottomTab}
+                setSelectedBottomTab={setSelectedBottomTab}
+                onProfilePress={() => navigation.openDrawer()}
+                onHomePress={() => navigation.navigate("Home")}
+                loanStatus={loanStatus?.loan_status}
+            />
+
+
+            <BankVerificationModal
+                visible={showBankModal}
+                onClose={() => handleVerifyBank("0")}
+                bankForm={bankForm}
+                setBankForm={setBankForm}
+                onVerify={() => handleVerifyBank("1")}
+                loading={isBankVerifying}
+            />
+        </View>
+    );
+};
+
+export default Home;
+
+
+{/* LEFT: PROCESSING BADGE */ }
+{/* <View style={HomeStyle.activeBadge}>
                                                                 <Text style={HomeStyle.activeText}>
                                                                     Processing
                                                                 </Text>
                                                             </View> */}
 
-                                                            {/* DIGILOCKER BUTTON */}
-                                                            {/* {step === "On Process" &&
+{/* DIGILOCKER BUTTON */ }
+{/* {step === "On Process" &&
                                                                 currentLoanStatus === "On Process" &&
                                                                 loanStatus?.digilocker_complete === "0" &&
                                                                 loanStatus?.digilocker_url !== "0" && (
@@ -481,30 +611,3 @@ const Home: React.FC<any> = ({ navigation }: any) => {
                                                                         style={{ width: 100, height: 40, borderRadius: 30 }}
                                                                     />
                                                                 )} */}
-
-                                                        </View>
-                                                    )}
-                                                </View>
-                                            </View>
-                                        );
-                                    })}
-                                </View>
-                            </>
-                        )}
-                    </>
-                )}
-            </ScrollView>
-
-            {/* FOOTER */}
-            <HomeFooter
-                selectedBottomTab={selectedBottomTab}
-                setSelectedBottomTab={setSelectedBottomTab}
-                onProfilePress={() => navigation.openDrawer()}
-                onHomePress={() => navigation.navigate("Home")}
-                loanStatus={loanStatus?.loan_status}
-            />
-        </View>
-    );
-};
-
-export default Home;

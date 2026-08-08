@@ -23,9 +23,12 @@ const LoanScreen: React.FC = ({ navigation }: any) => {
     const dispatch = useAppDispatch();
     const { calculation, loading } = useAppSelector((state) => state.user);
 
+    // Fetch initial calculation once on mount
     useEffect(() => {
         dispatch(getLoanCalculation(LoanAmount));
-    }, [LoanAmount]);
+    }, []);
+
+    // Debounced/manual fetch: we'll call getLoanCalculation when sliding completes
 
 
     const handleNext = async () => {
@@ -48,16 +51,7 @@ const LoanScreen: React.FC = ({ navigation }: any) => {
         }
     };
 
-    // const handleNext = () => {
-    //     if (!LoanAmount) {
-    //         Alert.alert("Please select loan amount");
-    //         return;
-    //     }
 
-    //     navigation.replace("DocumentScreen", {
-    //         loanAmount: LoanAmount,
-    //     });
-    // };
 
     return (
         <GradientBackground>
@@ -83,8 +77,9 @@ const LoanScreen: React.FC = ({ navigation }: any) => {
                                 minimumValue={3000}
                                 maximumValue={30000}
                                 step={1000}
-                                // onValueChange={amount => setLoanAmount(amount) || calculation()}
                                 onValueChange={(amount: number) => setLoanAmount(amount)}
+                                // Only fetch calculation when sliding ends to avoid excessive API calls
+                                onSlidingComplete={(amount: number) => dispatch(getLoanCalculation(amount))}
                                 trackHeight={13}
                                 thumbSize={40}
                                 renderThumb={() => (

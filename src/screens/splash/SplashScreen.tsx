@@ -13,6 +13,7 @@ import {
     getToken,
     requestPermission,
     AuthorizationStatus,
+    registerDeviceForRemoteMessages,
 } from "@react-native-firebase/messaging";
 
 import ScreenWrapper from "../../components/screenWrapper/ScreenWrapper";
@@ -51,39 +52,92 @@ const SplashScreen = ({ navigation }: any) => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
+
         initializeApplication();
     }, []);
 
+
     const initializeFirebaseApp = async () => {
+        console.log("1. initializeFirebaseApp called");
+
         try {
+            console.log("2. Before getApp");
+
             const app =
                 getApps().length === 0
-                    ? await initializeApp(firebaseConfig)
+                    ? initializeApp(firebaseConfig)
                     : getApp();
+
+            console.log("3. Firebase app ready");
 
             const messaging = getMessaging(app);
 
-            const authStatus = await requestPermission(messaging);
+            console.log("4. Messaging instance created");
 
-            const enabled =
-                authStatus === AuthorizationStatus.AUTHORIZED ||
-                authStatus === AuthorizationStatus.PROVISIONAL;
-
-            if (enabled) {
-                console.log("Notification Permission Granted");
+            if (Platform.OS === "ios") {
+                console.log("5. Registering device...");
+                await registerDeviceForRemoteMessages(messaging);
+                console.log("6. Device registered");
             }
 
-            await getToken(messaging);
-        } catch (error) {
-            console.log("Firebase Init Error:", error);
+            console.log("7. Requesting permission...");
+
+            const authStatus = await requestPermission(messaging);
+
+            console.log("8. Permission:", authStatus);
+
+            console.log("9. Getting token...");
+
+            const token = await getToken(messaging);
+
+            console.log("10. FCM Token:", token);
+        } catch (err) {
+            console.log("ERROR:", JSON.stringify(err));
+            console.error(err);
         }
     };
+
+    // const initializeFirebaseApp = async () => {
+    //     try {
+    //         const app =
+    //             getApps().length === 0
+    //                 ? initializeApp(firebaseConfig)
+    //                 : getApp();
+
+    //         const messaging = getMessaging(app);
+
+    //         // Required on iOS
+    //         if (Platform.OS === "ios") {
+    //             await registerDeviceForRemoteMessages(messaging);
+    //         }
+
+    //         const authStatus = await requestPermission(messaging);
+
+    //         const enabled =
+    //             authStatus === AuthorizationStatus.AUTHORIZED ||
+    //             authStatus === AuthorizationStatus.PROVISIONAL;
+
+    //         if (!enabled) {
+    //             console.log("Notification permission denied");
+    //             return;
+    //         }
+
+    //         console.log("Notification Permission Granted");
+
+    //         const token = await getToken(messaging);
+
+    //         console.log("FCM Token:", token);
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // };
 
     const checkForUpdate = async () => {
         try {
             const app_version = DeviceInfo.getVersion();
             const deviceId = await DeviceInfo.getUniqueId();
             const platform = Platform.OS;
+            console.log("DEVICE INFO:", { app_version, deviceId, platform });
 
             const apiResponse = await dispatch(
                 checkAppUpdate({
@@ -120,7 +174,13 @@ const SplashScreen = ({ navigation }: any) => {
     };
 
     const initializeApplication = async () => {
+
         await initializeFirebaseApp();
+
+        if (Platform.OS === "ios") {
+            await init();
+            return;
+        }
 
         const canProceed = await checkForUpdate();
 

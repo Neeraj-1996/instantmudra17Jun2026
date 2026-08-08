@@ -8,6 +8,8 @@ import {
     ImageBackground,
     Share,
     Linking,
+    Platform,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "./SuccessScreen.styles";
@@ -48,13 +50,17 @@ https://play.google.com/store/apps/details?id=com.instantmudra&pcampaignid=web_s
     };
 
     const openPlayStoreReview = () => {
-        Linking.openURL(
-            'market://details?id=com.instantmudra'
-        ).catch(() => {
-            Linking.openURL(
-                'https://play.google.com/store/apps/details?id=com.instantmudra'
+        if (Platform.OS === 'android') {
+            Linking.openURL('market://details?id=com.instantmudra').catch(() => {
+                Linking.openURL('https://play.google.com/store/apps/details?id=com.instantmudra');
+            });
+        } else {
+            // iOS app not available - inform the user
+            Alert.alert(
+                'Not available',
+                "The Instant Mudra app isn't available on the iOS App Store yet."
             );
-        });
+        }
     };
 
     return (
@@ -112,12 +118,22 @@ https://play.google.com/store/apps/details?id=com.instantmudra&pcampaignid=web_s
                             Tell us, did your loan process smooth and hassle-free?
                         </Text>
 
-                        <GradientButton
-                            title={'⭐ Write a Review'}
-                            onPress={openPlayStoreReview}
-                            style={styles.rateButton}
-                            textStyle={styles.rateButtonText}
-                        />
+                        {Platform.OS === 'ios' ? (
+                            <GradientButton
+                                title={'⭐ Write a Review'}
+                                onPress={() => Alert.alert('Not available', "The Instant Mudra app isn't available on the iOS App Store yet.")}
+                                style={styles.rateButton}
+                                textStyle={styles.rateButtonText}
+                                disabled={true}
+                            />
+                        ) : (
+                            <GradientButton
+                                title={'⭐ Write a Review'}
+                                onPress={openPlayStoreReview}
+                                style={styles.rateButton}
+                                textStyle={styles.rateButtonText}
+                            />
+                        )}
 
                     </ImageBackground>
 

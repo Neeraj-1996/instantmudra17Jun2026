@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { Colors } from "../../styles/colors";
 import { Fonts, FontSize } from "../../styles/fonts";
 import { moderateScale } from "../../styles/responsive";
@@ -13,7 +13,8 @@ export default StyleSheet.create({
     },
 
     header: {
-        paddingTop: 10,
+        // paddingTop: 10,
+        paddingTop: Platform.OS === 'ios' ? 0 : 10,
         paddingBottom: 0,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
@@ -31,7 +32,6 @@ export default StyleSheet.create({
     sliderWrapper: {
         justifyContent: 'center',
         alignContent: 'center'
-        // marginTop: 10,
     },
 
     body: {

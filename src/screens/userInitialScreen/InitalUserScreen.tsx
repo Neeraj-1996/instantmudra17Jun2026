@@ -28,9 +28,9 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { getLoanCalculation } from "../../redux/slices/userSlice";
 import { DigitalProcess, LowInterest, MinimalDocumentation, PaperLessProcess, QuickDisbursal, Transparent, WalletIcon1 } from "../../assets/images";
 
-const InitialScreen: FC = ({ navigation }: any) => {
+const InitialScreen: FC = ({ navigation, route }: any) => {
     const [loanAmount, setLoanAmount] = useState(30000);
-
+    const { email = "" } = route?.params || {};
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -50,189 +50,194 @@ const InitialScreen: FC = ({ navigation }: any) => {
     ];
 
     return (
-        <ScreenWrapper useBackground scroll>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                {/* TOP PURPLE HEADER */}
-                <LinearGradient
-                    colors={["#7B2FF7", "#F107A3"]}
-                    style={styles.headerCard}
-                >
-                    {/* <Text style={styles.welcome}>Hi, Welcome!</Text> */}
-                    <Text style={styles.title}>Get Instant Loan</Text>
-                    <Text style={styles.subtitle}>
-                        Simple. Fast. Hassle-free.
-                    </Text>
+        <ScreenWrapper useBackground scroll disableTopSafeArea barStyle="light-content">
+            {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+            {/* TOP PURPLE HEADER */}
+            <LinearGradient
+                colors={["#7B2FF7", "#F107A3"]}
+                style={styles.headerCard}
+            >
+                {/* <Text style={styles.welcome}>Hi, Welcome!</Text> */}
+                <Text style={styles.title}>Get Instant Loan</Text>
+                <Text style={styles.subtitle}>
+                    Simple. Fast. Hassle-free.
+                </Text>
 
-                    <Image source={WalletIcon1} style={styles.headerIcon} />
-                </LinearGradient>
+                <Image source={WalletIcon1} style={styles.headerIcon} />
+            </LinearGradient>
 
-                {/* LOAN CARD */}
-                <View style={styles.loanCard}>
-                    <Text style={styles.loanLabel}>Loan Amount</Text>
+            {/* LOAN CARD */}
+            <View style={styles.loanCard}>
+                <Text style={styles.loanLabel}>Loan Amount</Text>
 
-                    <Text style={styles.amount}>
-                        ₹{loanAmount.toLocaleString()}
-                    </Text>
+                <Text style={styles.amount}>
+                    ₹{loanAmount.toLocaleString()}
+                </Text>
 
-                    <CustomSlider
-                        value={loanAmount}
-                        minimumValue={3000}
-                        maximumValue={30000}
-                        step={1000}
-                        onValueChange={(amount: number) =>
-                            setLoanAmount(amount)
-                        }
-                        trackHeight={8}
-                        thumbSize={34}
-                        renderThumb={() => (
-                            <View style={styles.sliderThumb}>
-                                <Text style={styles.thumbText}>₹</Text>
-                            </View>
-                        )}
-                    />
-
-                    <View style={styles.rangeRow}>
-                        <Text style={styles.amount1}>₹3,000</Text>
-                        <Text style={styles.amount1}>₹30,000</Text>
-                    </View>
-
-                    {/* FEATURES */}
-                    <View style={styles.featureRow}>
-                        {features.map((item, index) => (
-                            <View key={index} style={styles.featureCard}>
-                                <Image
-                                    source={item.icon}
-                                    // style={styles.featureIcon}
-                                    style={[
-                                        styles.featureIcon,
-
-                                        index === 2 && {
-                                            width: 60,
-                                            height: 60,
-                                        },
-                                    ]}
-                                    resizeMode="cover"
-                                />
-                                <Text style={styles.featureText}>
-                                    {item.title}
-                                </Text>
-                            </View>
-                        ))}
-                    </View>
-
-                    <View style={styles.compareCard}>
-                        <Text style={styles.compareTitle}>
-                            Why pay <Text style={styles.redText}>30% interest</Text> per month{"\n"}
-                            when u get <Text style={styles.greenText}>5.5% interest</Text> per month{"\n"}
-                            with <Text style={styles.brandText}>Instant Mudra</Text>
-                        </Text>
-
-                        <View style={styles.compareRow}>
-                            {/* Other Lenders */}
-                            <View style={styles.compareBoxRed}>
-                                <Text style={styles.boxLabel}>Other Lenders</Text>
-                                <Text style={styles.redPercent}>30%</Text>
-                                <Text style={styles.perMonth}>per month</Text>
-                            </View>
-
-                            <View style={styles.vsCircle}>
-                                <Text style={styles.vsText}>VS</Text>
-                            </View>
-
-                            {/* Instant Mudra */}
-                            <View style={styles.compareBoxGreen}>
-                                <Text style={styles.boxLabel}>Instant Mudra</Text>
-                                <Text style={styles.greenPercent}>5.5%</Text>
-                                <Text style={styles.perMonth}>per month</Text>
-                            </View>
+                <CustomSlider
+                    value={loanAmount}
+                    minimumValue={3000}
+                    maximumValue={30000}
+                    step={1000}
+                    onValueChange={(amount: number) =>
+                        setLoanAmount(amount)
+                    }
+                    trackHeight={8}
+                    thumbSize={34}
+                    renderThumb={() => (
+                        <View style={styles.sliderThumb}>
+                            <Text style={styles.thumbText}>₹</Text>
                         </View>
+                    )}
+                />
 
-                        <LinearGradient
-                            colors={["#8A2BE2", "#5B00FF"]}
-                            style={styles.saveBanner}
-                        >
-                            <Text style={styles.saveText}>
-                                ✓ Save more. Pay less. Grow better.
-                            </Text>
-                        </LinearGradient>
-                    </View>
-
-
-
-
-
-                    <GradientButton
-                        title="Apply Now"
-                        onPress={() => navigation.navigate("KycScreen")}
-                        style={styles.applyBtn}
-                    />
+                <View style={styles.rangeRow}>
+                    <Text style={styles.amount1}>₹3,000</Text>
+                    <Text style={styles.amount1}>₹30,000</Text>
                 </View>
 
-                {/* SUPPORT */}
-                <View style={styles.supportCard}>
-                    <View style={styles.supportLeft}>
-                        <View style={styles.supportIcon}>
+                {/* FEATURES */}
+                <View style={styles.featureRow}>
+                    {features.map((item, index) => (
+                        <View key={index} style={styles.featureCard}>
                             <Image
-                                source={HeadsetIcon}
-                                style={styles.smallIcon}
+                                source={item.icon}
+                                // style={styles.featureIcon}
+                                style={[
+                                    styles.featureIcon,
+
+                                    index === 2 && {
+                                        width: 60,
+                                        height: 60,
+                                    },
+                                ]}
+                                resizeMode="cover"
                             />
-                        </View>
-
-                        <View style={styles.supportTextBox}>
-                            <Text
-                                style={styles.supportTitle}
-                            >
-                                Need Assistance?
+                            <Text style={styles.featureText}>
+                                {item.title}
                             </Text>
-
-                            <View style={{ flexDirection: 'column', flexWrap: 'wrap' }}>
-                                <Text
-                                    style={styles.supportDesc}
-                                >
-
-                                    Our support team is available
-
-                                </Text>
-                                <Text style={styles.supportDesc}> for
-                                    help</Text>
-                            </View>
                         </View>
-                    </View>
-
-                    <TouchableOpacity
-                        style={styles.chatBtn}
-
-                        onPress={() =>
-                            navigation.navigate("ContactUsScreen")}
-                    >
-                        <Text style={styles.chatText}>
-                            Chat
-                        </Text>
-                    </TouchableOpacity>
+                    ))}
                 </View>
 
-
-                {/* WHY CHOOSE US */}
-                <View style={styles.whyCard}>
-                    <Text style={styles.sectionTitle}>
-                        Why Choose Us?
+                <View style={styles.compareCard}>
+                    <Text style={styles.compareTitle}>
+                        Why pay <Text style={styles.redText}>30% interest</Text> per month{"\n"}
+                        when u get <Text style={styles.greenText}>5.5% interest</Text> per month{"\n"}
+                        with <Text style={styles.brandText}>Instant Mudra</Text>
                     </Text>
 
-                    <View style={styles.benefitRow}>
-                        {benefits.map((item, index) => (
-                            <View key={index} style={styles.benefitCard}>
-                                <Image
-                                    source={item.icon}
-                                    style={styles.benefitIcon}
-                                />
-                                <Text style={styles.benefitText}>
-                                    {item.title}
-                                </Text>
-                            </View>
-                        ))}
+                    <View style={styles.compareRow}>
+                        {/* Other Lenders */}
+                        <View style={styles.compareBoxRed}>
+                            <Text style={styles.boxLabel}>Other Lenders</Text>
+                            <Text style={styles.redPercent}>30%</Text>
+                            <Text style={styles.perMonth}>per month</Text>
+                        </View>
+
+                        <View style={styles.vsCircle}>
+                            <Text style={styles.vsText}>VS</Text>
+                        </View>
+
+                        {/* Instant Mudra */}
+                        <View style={styles.compareBoxGreen}>
+                            <Text style={styles.boxLabel}>Instant Mudra</Text>
+                            <Text style={styles.greenPercent}>5.5%</Text>
+                            <Text style={styles.perMonth}>per month</Text>
+                        </View>
+                    </View>
+
+                    <LinearGradient
+                        colors={["#8A2BE2", "#5B00FF"]}
+                        style={styles.saveBanner}
+                    >
+                        <Text style={styles.saveText}>
+                            ✓ Save more. Pay less. Grow better.
+                        </Text>
+                    </LinearGradient>
+                </View>
+
+
+
+
+
+                <GradientButton
+                    title="Apply Now"
+                    onPress={() =>
+                        navigation.navigate(
+                            "KycScreen",
+                            email ? { email } : undefined
+                        )
+                    }
+                    style={styles.applyBtn}
+                />
+            </View>
+
+            {/* SUPPORT */}
+            <View style={styles.supportCard}>
+                <View style={styles.supportLeft}>
+                    <View style={styles.supportIcon}>
+                        <Image
+                            source={HeadsetIcon}
+                            style={styles.smallIcon}
+                        />
+                    </View>
+
+                    <View style={styles.supportTextBox}>
+                        <Text
+                            style={styles.supportTitle}
+                        >
+                            Need Assistance?
+                        </Text>
+
+                        <View style={{ flexDirection: 'column', flexWrap: 'wrap' }}>
+                            <Text
+                                style={styles.supportDesc}
+                            >
+
+                                Our support team is available
+
+                            </Text>
+                            <Text style={styles.supportDesc}> for
+                                help</Text>
+                        </View>
                     </View>
                 </View>
-            </ScrollView>
+
+                <TouchableOpacity
+                    style={styles.chatBtn}
+
+                    onPress={() =>
+                        navigation.navigate("ContactUsScreen")}
+                >
+                    <Text style={styles.chatText}>
+                        Chat
+                    </Text>
+                </TouchableOpacity>
+            </View>
+
+
+            {/* WHY CHOOSE US */}
+            <View style={styles.whyCard}>
+                <Text style={styles.sectionTitle}>
+                    Why Choose Us?
+                </Text>
+
+                <View style={styles.benefitRow}>
+                    {benefits.map((item, index) => (
+                        <View key={index} style={styles.benefitCard}>
+                            <Image
+                                source={item.icon}
+                                style={styles.benefitIcon}
+                            />
+                            <Text style={styles.benefitText}>
+                                {item.title}
+                            </Text>
+                        </View>
+                    ))}
+                </View>
+            </View>
+            {/* </ScrollView> */}
         </ScreenWrapper>
     );
 };

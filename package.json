@@ -46,7 +46,6 @@
     "react-native-material-ripple": "^0.9.1",
     "react-native-modal": "^14.0.0-rc.1",
     "react-native-otp-textinput": "^1.1.7",
-    "react-native-otp-verify": "^1.2.0",
     "react-native-paper": "^5.15.0",
     "react-native-permissions": "^5.4.4",
     "react-native-reanimated": "^4.4.0",

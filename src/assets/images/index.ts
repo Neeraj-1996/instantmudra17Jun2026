@@ -13,6 +13,7 @@ import logo from '../images/SplashIcon/logo.png'
 
 import UserIcon from '../icons/Profile.png'
 import Phone from '../icons/Calling.png'
+import Email from '../icons/email.png'
 import FillCheckBox from '../icons/FillCheckBox.png'
 import EmtyCheckCox from '../icons/EmptyCheckBox.png'
 import BackIcon from '../icons/back.png'
@@ -72,6 +73,11 @@ import Experian from '../icons/exprain/experian.png'
 import Equifax from '../icons/exprain/Equifax_Logo.png'
 import Cibil from '../icons/exprain/Criflogo.png'
 import CIBILX from '../icons/exprain/CIBILxjpg.jpeg'
+
+import WhyPay from '../onbording/whyPay1.png'
+import GetApply from '../onbording/getapply2.png'
+import Apply3 from '../onbording/apply3.png'
+import ArrowOnboading from '../onbording/circleArrow.png'
 export {
     RuppeBg,
     GirlBg,
@@ -145,6 +151,12 @@ export {
     Experian,
     Equifax,
     Cibil,
-    CIBILX
+    CIBILX,
+
+    WhyPay,
+    GetApply,
+    Apply3,
+    ArrowOnboading,
+    Email,
 
 };

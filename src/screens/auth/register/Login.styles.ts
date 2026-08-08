@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
         marginRight: moderateScale(12),
         alignSelf: 'center',
         resizeMode: 'contain',
+        backgroundColor: Colors.white,
     },
     footer1: {
         fontSize: FontSize.FONT_16,

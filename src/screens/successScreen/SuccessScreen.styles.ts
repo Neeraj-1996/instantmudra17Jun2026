@@ -150,20 +150,19 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.BOLD
     },
     rateButton: {
-        backgroundColor: '#4CAF50',
-        paddingVertical: moderateScale(12),
-        paddingHorizontal: moderateScale(20),
         borderRadius: moderateScale(8),
         alignItems: 'center',
-        width: '70%',
+        width: "75%",
         alignSelf: 'center',
-
+        // height: moderateScale(70),
+        // textAlign: 'center',
     },
 
     rateButtonText: {
         color: '#fff',
         fontSize: moderateScale(16),
-        fontWeight: '600',
+        textAlign: 'center',
+        // fontWeight: '600',
     },
 });
 

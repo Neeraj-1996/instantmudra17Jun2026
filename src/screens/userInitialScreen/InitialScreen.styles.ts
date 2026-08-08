@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { Fonts, FontSize } from "../../styles/fonts";
 import { Colors } from "../../styles/colors";
 import { moderateScale } from "../../styles/responsive";
@@ -6,7 +6,7 @@ import { moderateScale } from "../../styles/responsive";
 
 export default StyleSheet.create({
     headerCard: {
-        padding: 24,
+        padding: Platform.OS === 'ios' ? 0 : 24,
         minHeight: 220,
         justifyContent: "center",
         borderBottomLeftRadius: moderateScale(24),
@@ -57,7 +57,9 @@ export default StyleSheet.create({
         borderRadius: 24,
         marginHorizontal: 16,
         marginTop: -40,
-        padding: 10,
+        // padding: 10,
+        paddingTop: Platform.OS === 'ios' ? 20 : 0,
+        padding: Platform.OS === 'ios' ? 0 : 10,
         elevation: 8,
         alignItems: "center",
     },
@@ -194,6 +196,7 @@ export default StyleSheet.create({
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.08,
         shadowRadius: 12,
+        alignItems: "center",
         elevation: 6,
     },
 

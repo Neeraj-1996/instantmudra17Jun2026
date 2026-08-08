@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { Colors } from "../../styles/colors";
-import { hp } from "../../styles/responsive";
+import { hp, moderateScale } from "../../styles/responsive";
 
 const styles = StyleSheet.create({
     topImage: {
@@ -29,9 +29,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#000",
         borderRadius: 20,
-        padding: 15,
-        marginBottom: 25,
-        alignItems: 'center'
+        padding: moderateScale(15),
+        marginBottom: moderateScale(25),
+        alignItems: 'center',
+        justifyContent: 'center',
+
     },
 
     loanText: {
@@ -41,12 +43,12 @@ const styles = StyleSheet.create({
 
     activeText: {
         fontSize: 16,
-        marginBottom: 10,
+        marginBottom: moderateScale(10),
     },
     detailsCard: {
         width: '100%',
-        marginTop: 50,
-        marginBottom: 70,
+        marginTop: moderateScale(50),
+        marginBottom: moderateScale(70),
 
         justifyContent: 'center'
 

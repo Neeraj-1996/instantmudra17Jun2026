@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
 import {
     View,
-    Text,
     Image,
     TouchableOpacity,
     FlatList,
     Dimensions,
+    Text,
 } from "react-native";
 
 import ScreenWrapper from "../../components/screenWrapper/ScreenWrapper";
@@ -14,37 +14,29 @@ import { Colors } from "../../styles/colors";
 import styles from "./Onboarding.style";
 
 import {
-    Arrow,
-    GirlBg,
-    RectangleBg,
-    LoanPercentageBg,
-    RuppeBg,
+    WhyPay,
+    GetApply,
+    Apply3,
+    ArrowOnboading,
 } from "../../assets/images";
+import { moderateScale } from "../../styles/responsive";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const slides = [
     {
-        image: GirlBg,
-        style: styles.girlImage,
-        title: "Keep Smiling and Fulfill Your\nNeeds with Quick Loans",
+        image: WhyPay,
     },
     {
-        image: LoanPercentageBg,
-        style: styles.girlImage2,
-        title: "Lower your loan burden — rates\nrates starting at just 5.5% per month",
+        image: GetApply,
     },
     {
-        image: RuppeBg,
-        style: styles.girlImage3,
-        title: "Simple, secure, and\n hassle-free loan processing",
+        image: Apply3,
     },
 ];
 
-
-
 const OnboardingScreen = ({ navigation }: any) => {
-    const flatListRef = useRef<FlatList<any>>(null);
+    const flatListRef = useRef<FlatList>(null);
     const [step, setStep] = useState(0);
 
     const handleNext = () => {
@@ -58,15 +50,6 @@ const OnboardingScreen = ({ navigation }: any) => {
         }
     };
 
-    const handleBack = () => {
-        if (step > 0) {
-            flatListRef.current?.scrollToIndex({
-                index: step - 1,
-                animated: true,
-            });
-        }
-    };
-
     const onMomentumScrollEnd = (event: any) => {
         const index = Math.round(
             event.nativeEvent.contentOffset.x / width
@@ -75,25 +58,20 @@ const OnboardingScreen = ({ navigation }: any) => {
     };
 
     const renderItem = ({ item }: any) => (
-        <View style={{ width }}>
-            <View style={styles.imageContainer}>
-                <Image
-                    source={RectangleBg}
-                    style={styles.whiteShape}
-                    resizeMode="contain"
-                />
-
-                <View style={styles.imageView}>
-                    <Image
-                        source={item.image}
-                        // style={styles.onboardingImage}
-                        style={slides[step].style}
-                        resizeMode="cover"
-                    />
-                </View>
-            </View>
-
-            {/* <Text style={styles.title}>{item.title}</Text> */}
+        <View
+            style={{
+                width,
+                height,
+            }}
+        >
+            <Image
+                source={item.image}
+                style={{
+                    width: "100%",
+                    height: "90%",
+                }}
+                resizeMode="cover"
+            />
         </View>
     );
 
@@ -104,145 +82,60 @@ const OnboardingScreen = ({ navigation }: any) => {
         >
             <GradientBackground>
                 <View style={{ flex: 1 }}>
-
-                    {/* Slider */}
                     <FlatList
                         ref={flatListRef}
                         data={slides}
                         renderItem={renderItem}
                         horizontal
                         pagingEnabled
+                        bounces={false}
                         showsHorizontalScrollIndicator={false}
                         keyExtractor={(_, index) => index.toString()}
                         onMomentumScrollEnd={onMomentumScrollEnd}
                     />
 
-                    {/* Dots */}
-                    <View style={styles.bottomContainer}>
-
-                        <Text style={styles.title}>
-                            {slides[step].title}
-                        </Text>
-
-                        <View style={styles.dotsContainer}>
-                            {slides.map((_, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    onPress={() =>
-                                        flatListRef.current?.scrollToIndex({
-                                            index,
-                                            animated: true,
-                                        })
-                                    }
-                                >
-                                    <View
-                                        style={[
-                                            styles.dot,
-                                            {
-                                                opacity: step === index ? 1 : 0.4,
-                                            },
-                                        ]}
-                                    />
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-
-                        <TouchableOpacity
-                            style={styles.nextButton}
-                            onPress={handleNext}
-                        >
-                            <Image source={Arrow} style={styles.arrowIcon} />
-                        </TouchableOpacity>
-
-                    </View>
-
-                    {/* <View style={styles.dotsContainer}>
-                        {slides.map((_, index) => (
+                    <View
+                        style={{
+                            position: "absolute",
+                            bottom: 20,
+                            width: "100%",
+                            alignItems: "center",
+                        }}
+                    >
+                        {step === slides.length - 1 ? (
                             <TouchableOpacity
-                                key={index}
-                                onPress={() =>
-                                    flatListRef.current?.scrollToIndex({
-                                        index,
-                                        animated: true,
-                                    })
-                                }
+                                onPress={handleNext}
+                                style={{
+                                    backgroundColor: "#fff",
+                                    paddingHorizontal: 35,
+                                    paddingVertical: 14,
+                                    borderRadius: 30,
+                                }}
                             >
-                                <View
-                                    style={[
-                                        styles.dot,
-                                        {
-                                            opacity: step === index ? 1 : 0.4,
-                                        },
-                                    ]}
+                                <Text
+                                    style={{
+                                        color: "#000",
+                                        fontSize: 16,
+                                        fontWeight: "700",
+                                    }}
+                                >
+                                    Get Started
+                                </Text>
+                            </TouchableOpacity>
+                        ) : (
+
+                            <TouchableOpacity onPress={handleNext} style={{ marginLeft: 250, marginTop: 20 }}>
+                                <Image
+                                    source={ArrowOnboading}
+                                    style={{
+                                        width: moderateScale(65),
+                                        height: moderateScale(65),
+                                        resizeMode: "contain",
+                                    }}
                                 />
                             </TouchableOpacity>
-                        ))}
+                        )}
                     </View>
-
-               
-                    <TouchableOpacity
-                        style={styles.nextButton}
-                        onPress={handleNext}
-                    >
-                        <Image
-                            source={Arrow}
-                            style={styles.arrowIcon}
-                        />
-                    </TouchableOpacity> */}
-                    {/* <View
-                        style={{
-                            alignItems: "center",
-                            marginBottom: 200,
-                        }}
-                    >
-                        <TouchableOpacity
-                            onPress={handleNext}
-                            style={styles.nextButton}
-                        >
-                            <Image
-                                source={Arrow}
-                                style={styles.arrowIcon}
-                            />
-                        </TouchableOpacity>
-                    </View> */}
-                    {/* <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            paddingHorizontal: 30,
-                            marginBottom: 50,
-                        }}
-                    >
-                        <TouchableOpacity
-                            onPress={handleBack}
-                            disabled={step === 0}
-                            style={[
-                                styles.nextButton,
-                                { opacity: step === 0 ? 0.3 : 1 },
-                            ]}
-                        >
-                            <Image
-                                source={Arrow}
-                                style={[
-                                    styles.arrowIcon,
-                                    {
-                                        transform: [{ scaleX: -1 }],
-                                    },
-                                ]}
-                            />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            onPress={handleNext}
-                            style={styles.nextButton}
-                        >
-                            <Image
-                                source={Arrow}
-                                style={styles.arrowIcon}
-                            />
-                        </TouchableOpacity>
-                    </View> */}
-
                 </View>
             </GradientBackground>
         </ScreenWrapper>
@@ -250,8 +143,17 @@ const OnboardingScreen = ({ navigation }: any) => {
 };
 
 export default OnboardingScreen;
-// import React, { useState } from "react";
-// import { View, Text, Image, TouchableOpacity } from "react-native";
+
+// import React, { useRef, useState } from "react";
+// import {
+//     View,
+//     Text,
+//     Image,
+//     TouchableOpacity,
+//     FlatList,
+//     Dimensions,
+// } from "react-native";
+
 // import ScreenWrapper from "../../components/screenWrapper/ScreenWrapper";
 // import GradientBackground from "../../components/gradient/GradinetBackgorund";
 // import { Colors } from "../../styles/colors";
@@ -262,8 +164,10 @@ export default OnboardingScreen;
 //     GirlBg,
 //     RectangleBg,
 //     LoanPercentageBg,
-//     RuppeBg
+//     RuppeBg,
 // } from "../../assets/images";
+
+// const { width } = Dimensions.get("window");
 
 // const slides = [
 //     {
@@ -274,89 +178,133 @@ export default OnboardingScreen;
 //     {
 //         image: LoanPercentageBg,
 //         style: styles.girlImage2,
-//         title: "Helps you cover not only the\nexpenses towards your course fees",
+//         title: "Lower your loan burden — rates\nrates starting at just 5.5% per month",
 //     },
 //     {
 //         image: RuppeBg,
 //         style: styles.girlImage3,
-//         title: "Apply Smart, Get Approved Faster\nWithout the Hassle",
+//         title: "Simple, secure, and\n hassle-free loan processing",
 //     },
 // ];
 
-// const OnboardingScreen = ({ navigation }: any) => {
 
+
+// const OnboardingScreen = ({ navigation }: any) => {
+//     const flatListRef = useRef<FlatList<any>>(null);
 //     const [step, setStep] = useState(0);
 
 //     const handleNext = () => {
-
 //         if (step < slides.length - 1) {
-//             setStep(step + 1);
+//             flatListRef.current?.scrollToIndex({
+//                 index: step + 1,
+//                 animated: true,
+//             });
 //         } else {
 //             navigation.replace("RegistrationScreen");
 //         }
-
 //     };
 
+//     const handleBack = () => {
+//         if (step > 0) {
+//             flatListRef.current?.scrollToIndex({
+//                 index: step - 1,
+//                 animated: true,
+//             });
+//         }
+//     };
+
+//     const onMomentumScrollEnd = (event: any) => {
+//         const index = Math.round(
+//             event.nativeEvent.contentOffset.x / width
+//         );
+//         setStep(index);
+//     };
+
+//     const renderItem = ({ item }: any) => (
+//         <View style={{ width }}>
+//             <View style={styles.imageContainer}>
+//                 <Image
+//                     source={RectangleBg}
+//                     style={styles.whiteShape}
+//                     resizeMode="contain"
+//                 />
+
+//                 <View style={styles.imageView}>
+//                     <Image
+//                         source={item.image}
+//                         // style={styles.onboardingImage}
+//                         style={slides[step].style}
+//                         resizeMode="cover"
+//                     />
+//                 </View>
+//             </View>
+
+//             {/* <Text style={styles.title}>{item.title}</Text> */}
+//         </View>
+//     );
+
 //     return (
-//         <ScreenWrapper backgroundColor={Colors.crimson} barStyle="light-content">
+//         <ScreenWrapper
+//             backgroundColor={Colors.crimson}
+//             barStyle="light-content"
+//         >
 //             <GradientBackground>
+//                 <View style={{ flex: 1 }}>
 
-//                 <View style={styles.container}>
+//                     {/* Slider */}
+//                     <FlatList
+//                         ref={flatListRef}
+//                         data={slides}
+//                         renderItem={renderItem}
+//                         horizontal
+//                         pagingEnabled
+//                         showsHorizontalScrollIndicator={false}
+//                         keyExtractor={(_, index) => index.toString()}
+//                         onMomentumScrollEnd={onMomentumScrollEnd}
+//                     />
 
-//                     {/* IMAGE SECTION */}
-//                     <View style={styles.imageContainer}>
-//                         <Image
-//                             source={RectangleBg}
-//                             style={styles.whiteShape}
-//                             resizeMode="contain"
-//                         />
-
-//                         <View style={styles.imageView}>
-//                             <Image
-//                                 source={slides[step].image}
-//                                 style={styles.onboardingImage}
-//                                 resizeMode="cover"
-//                             />
-//                         </View>
-//                     </View>
-
-
-//                     {/* BOTTOM SECTION */}
+//                     {/* Dots */}
 //                     <View style={styles.bottomContainer}>
 
-//                         {/* DOTS */}
-//                         <View style={styles.dotsContainer}>
-//                             {slides.map((_, index) => (
-//                                 <View
-//                                     key={index}
-//                                     style={[
-//                                         styles.dot,
-//                                         { opacity: step === index ? 1 : 0.4 }
-//                                     ]}
-//                                 />
-//                             ))}
-//                         </View>
-
-//                         {/* TITLE */}
 //                         <Text style={styles.title}>
 //                             {slides[step].title}
 //                         </Text>
 
-//                         {/* NEXT BUTTON */}
+//                         <View style={styles.dotsContainer}>
+//                             {slides.map((_, index) => (
+//                                 <TouchableOpacity
+//                                     key={index}
+//                                     onPress={() =>
+//                                         flatListRef.current?.scrollToIndex({
+//                                             index,
+//                                             animated: true,
+//                                         })
+//                                     }
+//                                 >
+//                                     <View
+//                                         style={[
+//                                             styles.dot,
+//                                             {
+//                                                 opacity: step === index ? 1 : 0.4,
+//                                             },
+//                                         ]}
+//                                     />
+//                                 </TouchableOpacity>
+//                             ))}
+//                         </View>
+
 //                         <TouchableOpacity
 //                             style={styles.nextButton}
 //                             onPress={handleNext}
 //                         >
-//                             <Image
-//                                 source={Arrow}
-//                                 style={styles.arrowIcon}
-//                             />
+//                             <Image source={Arrow} style={styles.arrowIcon} />
 //                         </TouchableOpacity>
 
 //                     </View>
 
-//                 </View>
 
+
+//                 </View>
 //             </GradientBackground>
 //         </ScreenWrapper>
 //     );

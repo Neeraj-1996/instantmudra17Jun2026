@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { Colors } from "../../styles/colors";
 import { Fonts, FontSize } from "../../styles/fonts";
 import { moderateScale } from "../../styles/responsive";
@@ -6,7 +6,7 @@ import { moderateScale } from "../../styles/responsive";
 export default StyleSheet.create({
 
     safeArea: {
-        flex: 1
+        flex: 1,
     },
 
     flex: {

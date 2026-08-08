@@ -1,3 +1,7 @@
+# Workaround: react-native-firebase is not yet compatible with RN 0.84's
+# precompiled iOS binaries. Force building React Native Core from source.
+ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -5,17 +9,20 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, min_ios_version_supported
+# ADD THESE TWO LINES
+require_relative '../node_modules/react-native-permissions/scripts/setup'
+setup_permissions([
+  'Camera',
+  'Notifications',
+])
 
-use_modular_headers!
+platform :ios, min_ios_version_supported
 
 prepare_react_native_project!
 
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
+# Required for Firebase (Swift-based products like FirebaseAuth)
+use_frameworks! :linkage => :static
+$RNFirebaseAsStaticFramework = true
 
 target 'InstantMudra' do
   config = use_native_modules!
@@ -31,8 +38,230 @@ target 'InstantMudra' do
       config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
+
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+      end
+    end
   end
 end
+
+
+# # Workaround: react-native-firebase is not yet compatible with RN 0.84's
+# # precompiled iOS binaries. Force building React Native Core from source.
+# # See: https://github.com/invertase/react-native-firebase/issues/8883
+# ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+
+# # Resolve react_native_pods.rb with node to allow for hoisting
+# require Pod::Executable.execute_command('node', ['-p',
+#   'require.resolve(
+#     "react-native/scripts/react_native_pods.rb",
+#     {paths: [process.argv[1]]},
+#   )', __dir__]).strip
+
+# platform :ios, min_ios_version_supported
+
+# prepare_react_native_project!
+
+# # Required for Firebase (Swift-based products like FirebaseAuth)
+# # See: https://rnfirebase.io/#altering-cocoapods-linkage
+# use_frameworks! :linkage => :static
+# $RNFirebaseAsStaticFramework = true
+
+# target 'InstantMudra' do
+#   config = use_native_modules!
+
+#   use_react_native!(
+#     :path => config[:reactNativePath],
+#     :app_path => "#{Pod::Config.instance.installation_root}/.."
+#   )
+
+#   post_install do |installer|
+#     react_native_post_install(
+#       installer,
+#       config[:reactNativePath],
+#       :mac_catalyst_enabled => false
+#     )
+
+#     installer.pods_project.targets.each do |target|
+#       target.build_configurations.each do |config|
+#         config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+#       end
+#     end
+#   end
+# end
+
+
+
+
+
+
+# # Workaround: react-native-firebase is not yet compatible with RN 0.84's
+# # precompiled iOS binaries. Force building React Native Core from source.
+# # See: https://github.com/invertase/react-native-firebase/issues/8883
+# ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+
+# # Resolve react_native_pods.rb with node to allow for hoisting
+# require Pod::Executable.execute_command('node', ['-p',
+#   'require.resolve(
+#     "react-native/scripts/react_native_pods.rb",
+#     {paths: [process.argv[1]]},
+#   )', __dir__]).strip
+
+# platform :ios, min_ios_version_supported
+
+# prepare_react_native_project!
+
+# linkage = ENV['USE_FRAMEWORKS']
+# if linkage != nil
+#   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+#   use_frameworks! :linkage => linkage.to_sym
+# end
+
+# target 'InstantMudra' do
+#   config = use_native_modules!
+
+#   # Scoped modular headers only for Firebase's dependency chain —
+#   # avoids forcing modular compilation onto system frameworks (UIKit etc.)
+#   pod 'GoogleUtilities', :modular_headers => true
+#   pod 'FirebaseCoreInternal', :modular_headers => true
+#   pod 'FirebaseCore', :modular_headers => true
+#   pod 'FirebaseCoreExtension', :modular_headers => true
+#   pod 'FirebaseInstallations', :modular_headers => true
+#   pod 'GoogleDataTransport', :modular_headers => true
+#   pod 'nanopb', :modular_headers => true
+
+#   use_react_native!(
+#     :path => config[:reactNativePath],
+#     :app_path => "#{Pod::Config.instance.installation_root}/.."
+#   )
+
+#   post_install do |installer|
+#     react_native_post_install(
+#       installer,
+#       config[:reactNativePath],
+#       :mac_catalyst_enabled => false
+#     )
+
+#     installer.pods_project.targets.each do |target|
+#       target.build_configurations.each do |config|
+#         config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+#       end
+#     end
+#   end
+# end
+
+
+
+# # Workaround: react-native-firebase is not yet compatible with RN 0.84's
+# # precompiled iOS binaries. Force building React Native Core from source.
+# # See: https://github.com/invertase/react-native-firebase/issues/8883
+# ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+
+# # Resolve react_native_pods.rb with node to allow for hoisting
+# require Pod::Executable.execute_command('node', ['-p',
+#   'require.resolve(
+#     "react-native/scripts/react_native_pods.rb",
+#     {paths: [process.argv[1]]},
+#   )', __dir__]).strip
+
+# platform :ios, min_ios_version_supported
+
+# use_modular_headers!
+
+# prepare_react_native_project!
+
+# linkage = ENV['USE_FRAMEWORKS']
+# if linkage != nil
+#   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+#   use_frameworks! :linkage => linkage.to_sym
+# end
+
+# target 'InstantMudra' do
+#   config = use_native_modules!
+
+#   use_react_native!(
+#     :path => config[:reactNativePath],
+#     :app_path => "#{Pod::Config.instance.installation_root}/.."
+#   )
+
+#   post_install do |installer|
+#     react_native_post_install(
+#       installer,
+#       config[:reactNativePath],
+#       :mac_catalyst_enabled => false
+#     )
+
+#     installer.pods_project.targets.each do |target|
+#       target.build_configurations.each do |config|
+#         config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+#       end
+#     end
+#   end
+# end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # Resolve react_native_pods.rb with node to allow for hoisting
+# require Pod::Executable.execute_command('node', ['-p',
+#   'require.resolve(
+#     "react-native/scripts/react_native_pods.rb",
+#     {paths: [process.argv[1]]},
+#   )', __dir__]).strip
+
+# platform :ios, min_ios_version_supported
+
+# use_modular_headers!
+
+# prepare_react_native_project!
+
+# linkage = ENV['USE_FRAMEWORKS']
+# if linkage != nil
+#   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+#   use_frameworks! :linkage => linkage.to_sym
+# end
+
+# target 'InstantMudra' do
+#   config = use_native_modules!
+
+#   use_react_native!(
+#     :path => config[:reactNativePath],
+#     :app_path => "#{Pod::Config.instance.installation_root}/.."
+#   )
+
+#   post_install do |installer|
+#     react_native_post_install(
+#       installer,
+#       config[:reactNativePath],
+#       :mac_catalyst_enabled => false
+#     )
+#   end
+# end
+
+
+
+
+
+
+
 # # Resolve react_native_pods.rb with node to allow for hoisting
 # require Pod::Executable.execute_command('node', ['-p',
 #   'require.resolve(

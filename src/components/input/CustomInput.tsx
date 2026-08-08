@@ -10,6 +10,7 @@ import { Colors } from "../../styles/colors";
 import globalStyles from "../../styles/styles";
 
 interface Props {
+    inputRef?: React.RefObject<TextInput | null>;
     value: string;
     onChangeText: (text: string) => void;
     placeholder?: string;
@@ -39,10 +40,12 @@ const CustomInput: React.FC<Props> = ({
     autoCorrect = false,
     autoComplete = "off",
     importantForAutofill = "no",
+    inputRef,
 }) => {
     return (
         <View style={{ width: "100%", marginBottom: 15 }}>
             <TextInput
+                ref={inputRef}
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}

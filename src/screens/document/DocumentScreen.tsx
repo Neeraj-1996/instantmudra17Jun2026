@@ -16,8 +16,9 @@ import { submitLoanDocuments } from "../../redux/slices/userSlice";
 import Loader from "../../components/loader/Loader";
 import usePermissions from "../../hooks/usePermissions";
 
-import { pick } from '@react-native-documents/picker';
+import { pick, types } from '@react-native-documents/picker';
 import CustomInput from "../../components/input/CustomInput";
+
 const DocumentScreen: React.FC = ({ navigation, route }: any) => {
     const { loanAmount } = route.params;
 
@@ -48,11 +49,10 @@ const DocumentScreen: React.FC = ({ navigation, route }: any) => {
 
         }
     };
-
     const pickDocument = async (type: 'bank' | 'salary') => {
         try {
             const result = await pick({
-                type: ['application/pdf'],
+                type: [types.pdf],
                 allowMultiSelection: type === 'salary',
             });
 
@@ -67,15 +67,41 @@ const DocumentScreen: React.FC = ({ navigation, route }: any) => {
     const pickSalarySlip = async (setFile: any) => {
         try {
             const result = await pick({
-                type: ['application/pdf'],
+                type: [types.pdf],
             });
 
             setFile(result[0]);
-
         } catch (err) {
             console.log('Cancelled or error', err);
         }
     };
+    // const pickDocument = async (type: 'bank' | 'salary') => {
+    //     try {
+    //         const result = await pick({
+    //             type: ['application/pdf'],
+    //             allowMultiSelection: type === 'salary',
+    //         });
+
+    //         if (type === 'bank') {
+    //             setBankStatement(result[0]);
+    //         }
+    //     } catch (err) {
+    //         console.log('User cancelled or error', err);
+    //     }
+    // };
+
+    // const pickSalarySlip = async (setFile: any) => {
+    //     try {
+    //         const result = await pick({
+    //             type: ['application/pdf'],
+    //         });
+
+    //         setFile(result[0]);
+
+    //     } catch (err) {
+    //         console.log('Cancelled or error', err);
+    //     }
+    // };
 
 
     const handleNext = () => {

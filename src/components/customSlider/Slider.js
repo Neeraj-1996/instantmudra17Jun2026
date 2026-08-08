@@ -15,6 +15,10 @@ const CustomSlider = ({
     value = 0,
     step = 1,
     onValueChange,
+    // Called when user starts sliding
+    onSlidingStart,
+    // Called with final value when sliding ends
+    onSlidingComplete,
     sliderWidth = 280,
     trackHeight = 10,
     thumbSize = 30,
@@ -35,9 +39,24 @@ const CustomSlider = ({
 
     const panResponder = useRef(
         PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
+            // Only become responder for predominantly horizontal moves.
+            onStartShouldSetPanResponder: () => false,
+            onStartShouldSetPanResponderCapture: () => false,
+            onMoveShouldSetPanResponder: (_, gesture) => {
+                const { dx, dy } = gesture;
+                // Require horizontal movement to be larger than vertical and pass a small threshold
+                return Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6;
+            },
+            onMoveShouldSetPanResponderCapture: (_, gesture) => {
+                const { dx, dy } = gesture;
+                return Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6;
+            },
             onPanResponderGrant: () => {
-                animatedX.stopAnimation();
+                // Capture current animated value as the base offset
+                animatedX.stopAnimation((v) => {
+                    positionRef.current.offsetX = typeof v === 'number' ? v : 0;
+                });
+                onSlidingStart && onSlidingStart();
             },
             onPanResponderMove: (_, gesture) => {
                 const dx = gesture.dx;
@@ -51,11 +70,26 @@ const CustomSlider = ({
                 setSliderValue(steppedValue);
                 onValueChange && onValueChange(steppedValue);
             },
-            onPanResponderRelease: () => {
-                animatedX.stopAnimation(value => {
-                    positionRef.current.offsetX = value;
-                });
+            onPanResponderRelease: (_, gesture) => {
+                // Update stored offset to the final position
+                const finalX = Math.max(0, Math.min(positionRef.current.offsetX + gesture.dx, sliderWidth));
+                positionRef.current.offsetX = finalX;
+                animatedX.setValue(finalX);
+
+                const rawValue = minimumValue + (finalX / sliderWidth) * (maximumValue - minimumValue);
+                const finalValue = Math.round(rawValue / step) * step;
+                onSlidingComplete && onSlidingComplete(finalValue);
             },
+            onPanResponderTerminate: (_, gesture) => {
+                const finalX = Math.max(0, Math.min(positionRef.current.offsetX + gesture.dx, sliderWidth));
+                positionRef.current.offsetX = finalX;
+                animatedX.setValue(finalX);
+
+                const rawValue = minimumValue + (finalX / sliderWidth) * (maximumValue - minimumValue);
+                const finalValue = Math.round(rawValue / step) * step;
+                onSlidingComplete && onSlidingComplete(finalValue);
+            },
+            onPanResponderTerminationRequest: () => false,
         })
     ).current;
 

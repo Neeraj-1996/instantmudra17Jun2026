@@ -1,4 +1,8 @@
-export const handleUserNavigation = (navigation: any, status: any) => {
+export const handleUserNavigation = (
+    navigation: any,
+    status: any,
+    params?: any
+) => {
 
     if (status.loan_rejected === 1 && status.loan_status === 0) {
         navigation.replace("Home");
@@ -16,7 +20,7 @@ export const handleUserNavigation = (navigation: any, status: any) => {
         navigation.replace("EmploymentScreen");
     }
     else {
-        // navigation.replace("KycScreen");
-        navigation.replace("InitialScreen");
+        navigation.replace("InitialScreen", params);
+        // or navigation.replace("KycScreen", params);
     }
 };

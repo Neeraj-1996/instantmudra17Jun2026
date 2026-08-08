@@ -8,4 +8,5 @@ export const ENDPOINTS = {
     USER: "/user",
     CHECK_PHONE_EXISTS: "/check-phone-exists",
     CHECK_UPDATE: "update-app-version",
+    BANK_ACCOUNT_VERIFICATION: "bank-account-verification",
 };

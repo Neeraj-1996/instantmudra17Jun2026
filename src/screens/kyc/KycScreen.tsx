@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     View,
     Text,
     TouchableOpacity,
     Image,
     Alert,
+    TextInput,
 } from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import KycStyles from "./Kyc.styles";
@@ -29,15 +30,17 @@ type FormType = {
     state: string;
 };
 
-const KycScreen: React.FC = ({ navigation }: any) => {
+const KycScreen: React.FC = ({ navigation, route }: any) => {
     const [panImage, setPanImage] = useState<any>(null);
     const [aadhaarFront, setAadhaarFront] = useState<any>(null);
     const [aadhaarBack, setAadhaarBack] = useState<any>(null);
     const [errors, setErrors] = useState<any>({});
+    const { email = "" } = route?.params || {};
+    console.log("Email from route params:", email);
     const [form, setForm] = useState<FormType>({
         pan: "",
         aadhaar: "",
-        email: "",
+        email,
         mobile: "",
         address: "",
         pincode: "",
@@ -48,25 +51,25 @@ const KycScreen: React.FC = ({ navigation }: any) => {
 
     const [pickerVisible, setPickerVisible] = useState(false);
     const [selectedSetter, setSelectedSetter] = useState<any>(null);
-    const generateRandomImageName = () => {
-        return `image_${Math.random().toString(36).substring(2, 10)}.jpg`;
-    };
+    // const generateRandomImageName = () => {
+    //     return `image_${Math.random().toString(36).substring(2, 10)}.jpg`;
+    // };
 
-    const pickImage = (setter: any) => {
-        launchImageLibrary({ mediaType: "photo" }, (res) => {
-            if (res.assets && res.assets.length > 0) {
-                const asset = res.assets[0];
+    // const pickImage = (setter: any) => {
+    //     launchImageLibrary({ mediaType: "photo" }, (res) => {
+    //         if (res.assets && res.assets.length > 0) {
+    //             const asset = res.assets[0];
 
-                setter({
-                    uri: asset.uri?.startsWith("file://")
-                        ? asset.uri
-                        : `file://${asset.uri}`,
-                    name: asset.fileName || `image_${Date.now()}.jpg`,
-                    type: asset.type || "image/jpeg",
-                });
-            }
-        });
-    };
+    //             setter({
+    //                 uri: asset.uri?.startsWith("file://")
+    //                     ? asset.uri
+    //                     : `file://${asset.uri}`,
+    //                 name: asset.fileName || `image_${Date.now()}.jpg`,
+    //                 type: asset.type || "image/jpeg",
+    //             });
+    //         }
+    //     });
+    // };
 
     const { takePhoto } = usePermissions();
     const dispatch = useAppDispatch();
@@ -189,6 +192,25 @@ const KycScreen: React.FC = ({ navigation }: any) => {
         }));
     };
 
+    const panInputRef = useRef<TextInput | null>(null);
+
+    const panKeyboardType =
+        form.pan.length >= 5 && form.pan.length < 9 ? "number-pad" : "default";
+
+    useEffect(() => {
+        // On iOS, keyboardType doesn't update while TextInput is focused.
+        // Force a brief blur+focus to update the keyboard when type changes.
+        const input = panInputRef.current;
+        try {
+            if (input && (input as any).isFocused && (input as any).isFocused()) {
+                input.blur();
+                setTimeout(() => input.focus(), 50);
+            }
+        } catch (e) {
+            // ignore
+        }
+    }, [panKeyboardType]);
+
     const fetchPinCodeDetails = async (pin: string) => {
         try {
             const response = await fetch(
@@ -246,23 +268,26 @@ const KycScreen: React.FC = ({ navigation }: any) => {
     const openGallery = async () => {
 
         setPickerVisible(false);
-
+        console.log("Opening gallery...");
         const res = await launchImageLibrary({
             mediaType: "photo",
             quality: 0.8,
         });
-
+        console.log("Gallery result:", res);
         if (res.assets && res.assets.length > 0) {
 
             const asset = res.assets[0];
 
+            const uri = asset.uri || asset.uriString || null;
+            const normalizedUri = uri
+                ? uri.startsWith("/")
+                    ? `file://${uri}`
+                    : uri
+                : null;
+
             selectedSetter({
-                uri: asset.uri?.startsWith("file://")
-                    ? asset.uri
-                    : `file://${asset.uri}`,
-                name:
-                    asset.fileName ||
-                    `image_${Date.now()}.jpg`,
+                uri: normalizedUri,
+                name: asset.fileName || `image_${Date.now()}.jpg`,
                 type: asset.type || "image/jpeg",
             });
         }
@@ -274,26 +299,27 @@ const KycScreen: React.FC = ({ navigation }: any) => {
 
         const result = await takePhoto({
             mediaType: "photo",
-            quality: 0.8,
+            quality: 0.5,
             cameraType: "back",
         });
-
+        console.log("Camera result:", result);
         if (
             result?.success &&
             result?.asset
         ) {
 
             const asset = result.asset;
+            const uri = asset.uri || asset.uriString || null;
+            const normalizedUri = uri
+                ? uri.startsWith("/")
+                    ? `file://${uri}`
+                    : uri
+                : null;
 
             selectedSetter({
-                uri: asset.uri?.startsWith("file://")
-                    ? asset.uri
-                    : `file://${asset.uri}`,
-                name:
-                    asset.fileName ||
-                    `image_${Date.now()}.jpg`,
-                type:
-                    asset.type || "image/jpeg",
+                uri: normalizedUri,
+                name: asset.fileName || `image_${Date.now()}.jpg`,
+                type: asset.type || "image/jpeg",
             });
         }
     };
@@ -321,13 +347,14 @@ const KycScreen: React.FC = ({ navigation }: any) => {
                 </Text>
 
                 <CustomInput
+                    inputRef={panInputRef}
                     value={form.pan}
                     onChangeText={(val: string) => handleChange("pan", val)}
                     placeholder="Pan Number"
                     error={errors.pan}
                     maxLength={10}
                     autoCapitalize='characters'
-                    keyboardType={form.pan.length >= 5 && form.pan.length < 9 ? 'number-pad' : 'default'}
+                    keyboardType={panKeyboardType}
                 />
 
                 <UploadBox
@@ -464,47 +491,4 @@ const KycScreen: React.FC = ({ navigation }: any) => {
 };
 
 export default KycScreen;
-
-
-
-// const handleNext = () => {
-//     navigation.replace("EmploymentScreen");
-//     // let newErrors: any = {};
-
-//     // Object.keys(form).forEach((key) => {
-//     //     if (!form[key as keyof FormType]) {
-//     //         newErrors[key] = true;
-//     //     }
-//     // });
-
-//     // if (!panImage) newErrors.panImage = true;
-//     // if (!aadhaarFront) newErrors.aadhaarFront = true;
-//     // if (!aadhaarBack) newErrors.aadhaarBack = true;
-//     // if (!selfie) newErrors.selfie = true;
-
-//     // setErrors(newErrors);
-
-//     // if (Object.keys(newErrors).length === 0) {
-//     //     navigation.replace("EmploymentScreen");
-//     // }
-// };
-
-// const UploadBox = ({ label, image, onPress, placeholderImage }: any) => (
-//     <TouchableOpacity style={KycStyles.uploadBox} onPress={onPress}>
-//         {image ? (
-//             <Image source={{ uri: image }} style={KycStyles.uploadImage} />
-//         ) : (
-//             <View style={{ alignItems: "center" }}>
-//                 <Text style={KycStyles.uploadText}>{label}</Text>
-//                 <Image source={placeholderImage} style={KycStyles.IdImage} />
-//             </View>
-//         )}
-//     </TouchableOpacity>
-// );
-
-
-// const handleNext = () => {
-//     navigation.replace("EmploymentScreen");
-// };
-
 
