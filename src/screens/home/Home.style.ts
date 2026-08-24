@@ -40,7 +40,7 @@ export default StyleSheet.create({
 
     card: {
         backgroundColor: Colors.white,
-        padding: 18,
+        // padding: 18,
         borderRadius: 16,
         marginBottom: 20,
         elevation: 3,

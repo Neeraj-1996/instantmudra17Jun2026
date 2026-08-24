@@ -104,42 +104,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
         }
     };
 
-    // const handleSubmit = async () => {
-    //     try {
-    //         const selectedReason = reasons.find(
-    //             (reason) => reason.id === selectedReasonId
-    //         );
-
-    //         if (!selectedReason) {
-    //             Alert.alert("Please select a reason");
-    //             return;
-    //         }
-
-    //         const payload = {
-
-    //             reason: selectedReason.name,
-    //             msg: "msg",
-    //         };
-
-    //         console.log("payload", payload);
-
-    //         // const response = await axios.post(
-    //         //     `${BASE_URL}API/reason`,
-    //         //     payload,
-    //         //     {
-    //         //         headers: {
-    //         //             "Content-Type": "application/json",
-    //         //         },
-    //         //     }
-    //         // );
-
-    //         // console.log("API Response:", response.data);
-
-    //         BackHandler.exitApp();
-    //     } catch (error) {
-    //         console.error("Error submitting reason:", error);
-    //     }
-    // };
 
     return (
         <Modal

@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { moderateScale } from "../../../styles/responsive";
 import { Colors } from "../../../styles/colors";
 import { Fonts, FontSize } from "../../../styles/fonts";
@@ -6,7 +6,6 @@ import { Fonts, FontSize } from "../../../styles/fonts";
 const styles = StyleSheet.create({
     header: {
         height: moderateScale(180),
-        padding: moderateScale(20),
         justifyContent: "center",
     },
 
@@ -20,6 +19,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginTop: moderateScale(40),
+        padding: moderateScale(20),
     },
 
     avatar: {

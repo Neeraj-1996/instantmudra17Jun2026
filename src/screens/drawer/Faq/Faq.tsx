@@ -58,7 +58,7 @@ const Faq = ({ navigation }: any) => {
     );
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
             <Header navigation={navigation} title="FAQ" />
 
             <ScrollView contentContainerStyle={styles.container}>
@@ -72,7 +72,7 @@ const Faq = ({ navigation }: any) => {
                     duration={300}
                 />
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 };
 

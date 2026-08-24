@@ -138,31 +138,32 @@ const Home: React.FC<any> = ({ navigation }: any) => {
     };
 
 
+    const shouldShowBankVerificationModal =
+        currentLoanStatus === "Approved" &&
+        loanStatus?.zoopesign_complete === "0" &&
+        loanStatus?.zoopesign_url !== "0" &&
+        loanStatus?.bank_status === "0";
+
     useFocusEffect(
         React.useCallback(() => {
-            if (loanStatus?.loan_status === "Sanction") {
-                if (loanStatus?.bank_status === "0") {
-                    setShowBankModal(true);
+            if (shouldShowBankVerificationModal) {
+                setShowBankModal(true);
+                takeAccountDetail();
 
-                    takeAccountDetail();
-
-                    setBankForm({
-                        accountHolder:
-                            loanStatus?.bank_details?.account_holder || "",
-                        accountNumber:
-                            loanStatus?.bank_details?.account_number || "",
-                        ifsc:
-                            loanStatus?.bank_details?.ifsc || "",
-                        bankName:
-                            loanStatus?.bank_details?.bank_name || "",
-                    });
-                } else {
-                    setShowBankModal(false);
-                }
+                setBankForm({
+                    accountHolder:
+                        loanStatus?.bank_details?.account_holder || "",
+                    accountNumber:
+                        loanStatus?.bank_details?.account_number || "",
+                    ifsc:
+                        loanStatus?.bank_details?.ifsc || "",
+                    bankName:
+                        loanStatus?.bank_details?.bank_name || "",
+                });
             } else {
                 setShowBankModal(false);
             }
-        }, [loanStatus])
+        }, [loanStatus, currentLoanStatus, shouldShowBankVerificationModal])
     );
 
     const handleVerifyBank = async (verification_id: "1" | "2") => {
@@ -183,26 +184,26 @@ const Home: React.FC<any> = ({ navigation }: any) => {
                 message?: string;
             };
 
-            console.log("Bank verification response:", response);
+            // console.log("Bank verification response:", response);
 
             // Only status 0 keeps modal open
             setShowBankModal(response?.bank_status === "0");
 
             if (response?.bank_status === "3") {
-                Alert.alert(
-                    "Verification Failed",
-                    response?.message || "Bank account verification failed"
-                );
+                // Alert.alert(
+                //     "Verification Failed",
+                //     response?.message || "Bank account verification failed"
+                // );
             }
 
             dispatch(getLoanStatus());
         } catch (error) {
             console.log("Bank verification error:", error);
 
-            Alert.alert(
-                "Verification Failed",
-                "Something went wrong. Please try again."
-            );
+            // Alert.alert(
+            //     "Verification Failed",
+            //     "Something went wrong. Please try again."
+            // );
         } finally {
             setIsBankVerifying(false);
         }

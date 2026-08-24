@@ -18,6 +18,8 @@ import usePermissions from "../../hooks/usePermissions";
 
 import { pick, types } from '@react-native-documents/picker';
 import CustomInput from "../../components/input/CustomInput";
+import Header from "../../components/header/Header";
+import GradientButton from "../../components/button/Button";
 
 const DocumentScreen: React.FC = ({ navigation, route }: any) => {
     const { loanAmount } = route.params;
@@ -143,140 +145,146 @@ const DocumentScreen: React.FC = ({ navigation, route }: any) => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.container}>
+        // <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.container}>
+            <Header
+                navigation={navigation}
+                title="Document"
+                showBack={false}
+            />
 
+            {/* Header */}
+            {/* <View style={styles.header}>
+                <Text style={styles.headerText}>Document</Text>
+            </View> */}
 
-                {/* Header */}
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Document</Text>
-                </View>
+            <Loader showLoader={loading} />
 
-                <Loader showLoader={loading} />
+            <ScrollView showsVerticalScrollIndicator={false}>
+                {/* Content */}
+                <View style={styles.content}>
 
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    {/* Content */}
-                    <View style={styles.content}>
+                    {/* Bank Statement */}
+                    <Text style={styles.sectionTitle}>Bank Statement</Text>
+                    <View style={styles.divider} />
 
-                        {/* Bank Statement */}
-                        <Text style={styles.sectionTitle}>Bank Statement</Text>
-                        <View style={styles.divider} />
-
-                        {/* <View style={styles.centerBox}> */}
-                        {/* <Image source={PdfIcon} style={styles.pdfIcon} /> */}
-                        <TouchableOpacity onPress={() => pickDocument('bank')}>
-                            <View style={[
-                                styles.centerBox,
-                                errors.bank && { borderColor: 'red', borderWidth: 1.5 }
-                            ]}>
-                                <Image source={PdfIcon} style={styles.pdfIcon} />
-                                {bankStatement && (
-                                    <Text style={{ marginTop: 10 }}>
-                                        {bankStatement.name}
-                                    </Text>
-                                )}
-                            </View>
-                        </TouchableOpacity>
-                        {/* </View> */}
-
-
-                        <CustomInput
-                            value={bankStatementPin}
-                            onChangeText={setBankStatementPin}
-                            placeholder="Enter Bank Statement PIN (Optional)"
-                        // keyboardType="numeric"
-                        />
-                        {/* Salary Slips */}
-                        <Text style={styles.sectionTitle}>Salary Slips</Text>
-
-                        <View style={styles.row}>
-
-                            {/* Salary Slip 1 */}
-                            <View style={{ width: "48%" }}>
-                                <TouchableOpacity onPress={() => pickSalarySlip(setSalarySlip1)}>
-                                    <View style={[
-                                        styles.smallBox,
-                                        errors.salary && { borderColor: 'red', borderWidth: 1.5 }
-                                    ]}>
-                                        <Image source={PdfIcon} style={styles.pdfIconSmall} />
-                                        <Text style={styles.label}>
-                                            {salarySlip1 ? salarySlip1.name : "Salary Slip 1"}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-
-                            {/* Salary Slip 2 */}
-                            <View style={{ width: "48%" }}>
-                                <TouchableOpacity onPress={() => pickSalarySlip(setSalarySlip2)}>
-                                    <View style={[
-                                        styles.smallBox,
-                                        errors.salary && { borderColor: 'red', borderWidth: 1.5 }
-                                    ]}>
-                                        <Image source={PdfIcon} style={styles.pdfIconSmall} />
-                                        <Text style={styles.label}>
-                                            {salarySlip2 ? salarySlip2.name : "Salary Slip 2"}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-
-                        </View>
-
-                        {/* Salary Slip 3 */}
-                        <TouchableOpacity onPress={() => pickSalarySlip(setSalarySlip3)}>
-                            <View style={[styles.centerBoxSmall, errors.salary && { borderColor: 'red', borderWidth: 1.5 }]} >
-                                <Image source={PdfIcon} style={styles.pdfIconSmall} />
-                                <Text style={styles.label}>
-                                    {salarySlip3 ? salarySlip3.name : "Salary Slip 3"}
+                    {/* <View style={styles.centerBox}> */}
+                    {/* <Image source={PdfIcon} style={styles.pdfIcon} /> */}
+                    <TouchableOpacity onPress={() => pickDocument('bank')}>
+                        <View style={[
+                            styles.centerBox,
+                            errors.bank && { borderColor: 'red', borderWidth: 1.5 }
+                        ]}>
+                            <Image source={PdfIcon} style={styles.pdfIcon} />
+                            {bankStatement && (
+                                <Text style={{ marginTop: 10 }}>
+                                    {bankStatement.name}
                                 </Text>
-                            </View>
-                        </TouchableOpacity>
-                        <View style={{ marginTop: 10 }}>
-                            <CustomInput
-                                value={salarySlipPin}
-                                onChangeText={setSalarySlipPin}
-                                placeholder="Enter Salary Slip PIN (Optional)"
-                            // keyboardType="ph"
+                            )}
+                        </View>
+                    </TouchableOpacity>
+                    {/* </View> */}
 
-                            />
+
+                    <CustomInput
+                        value={bankStatementPin}
+                        onChangeText={setBankStatementPin}
+                        placeholder="Enter Bank Statement PIN (Optional)"
+                    // keyboardType="numeric"
+                    />
+                    {/* Salary Slips */}
+                    <Text style={styles.sectionTitle}>Salary Slips</Text>
+
+                    <View style={styles.row}>
+
+                        {/* Salary Slip 1 */}
+                        <View style={{ width: "48%" }}>
+                            <TouchableOpacity onPress={() => pickSalarySlip(setSalarySlip1)}>
+                                <View style={[
+                                    styles.smallBox,
+                                    errors.salary && { borderColor: 'red', borderWidth: 1.5 }
+                                ]}>
+                                    <Image source={PdfIcon} style={styles.pdfIconSmall} />
+                                    <Text style={styles.label}>
+                                        {salarySlip1 ? salarySlip1.name : "Salary Slip 1"}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
 
-                        {/* ================= SELFIE ================= */}
-                        <Text style={styles.selfieText}>Upload Your Selfie</Text>
-
-                        <TouchableOpacity onPress={handleTakePhoto}>
-                            <View
-                                style={[
-                                    styles.selfieContainer,
-                                    errors.selfie && styles.errorBorder,
-                                ]}
-                            >
-                                {selfie ? (
-                                    <Image source={{ uri: selfie.uri }} style={styles.selfie} />
-                                ) : (
-                                    <>
-                                        <Image source={GirlIconCamera} style={styles.selfie} />
-                                        <View style={styles.overlay} />
-                                        <Image source={Camera} style={styles.cameraIcon} />
-                                    </>
-                                )}
-                            </View>
-                        </TouchableOpacity>
-
-
-                        {/* Button */}
-
-                        <TouchableOpacity style={styles.button} onPress={handleNext}>
-                            <Text style={styles.buttonText}>
-                                {loading ? "Uploading..." : "Done"}
-                            </Text>
-                        </TouchableOpacity>
+                        {/* Salary Slip 2 */}
+                        <View style={{ width: "48%" }}>
+                            <TouchableOpacity onPress={() => pickSalarySlip(setSalarySlip2)}>
+                                <View style={[
+                                    styles.smallBox,
+                                    errors.salary && { borderColor: 'red', borderWidth: 1.5 }
+                                ]}>
+                                    <Image source={PdfIcon} style={styles.pdfIconSmall} />
+                                    <Text style={styles.label}>
+                                        {salarySlip2 ? salarySlip2.name : "Salary Slip 2"}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
 
                     </View>
-                </ScrollView>
-            </View>
-        </SafeAreaView>
+
+                    {/* Salary Slip 3 */}
+                    <TouchableOpacity onPress={() => pickSalarySlip(setSalarySlip3)}>
+                        <View style={[styles.centerBoxSmall, errors.salary && { borderColor: 'red', borderWidth: 1.5 }]} >
+                            <Image source={PdfIcon} style={styles.pdfIconSmall} />
+                            <Text style={styles.label}>
+                                {salarySlip3 ? salarySlip3.name : "Salary Slip 3"}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <View style={{ marginTop: 10 }}>
+                        <CustomInput
+                            value={salarySlipPin}
+                            onChangeText={setSalarySlipPin}
+                            placeholder="Enter Salary Slip PIN (Optional)"
+                        // keyboardType="ph"
+
+                        />
+                    </View>
+
+                    {/* ================= SELFIE ================= */}
+                    <Text style={styles.selfieText}>Upload Your Selfie</Text>
+
+                    <TouchableOpacity onPress={handleTakePhoto}>
+                        <View
+                            style={[
+                                styles.selfieContainer,
+                                errors.selfie && styles.errorBorder,
+                            ]}
+                        >
+                            {selfie ? (
+                                <Image source={{ uri: selfie.uri }} style={styles.selfie} />
+                            ) : (
+                                <>
+                                    <Image source={GirlIconCamera} style={styles.selfie} />
+                                    <View style={styles.overlay} />
+                                    <Image source={Camera} style={styles.cameraIcon} />
+                                </>
+                            )}
+                        </View>
+                    </TouchableOpacity>
+
+
+                    {/* Button */}
+
+                    <GradientButton
+                        title={loading ? "Uploading..." : "Done"}
+                        onPress={handleNext}
+                        loading={loading}
+                        style={styles.button}
+                        textStyle={styles.buttonText}
+                    />
+
+                </View>
+            </ScrollView>
+        </View>
+        // </SafeAreaView>
     );
 };
 

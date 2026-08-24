@@ -52,7 +52,7 @@ export default StyleSheet.create({
 
     label: {
         fontSize: 12,
-        marginTop: 4,
+        marginTop: 2,
         color: "#999",
     },
 

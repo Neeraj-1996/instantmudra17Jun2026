@@ -5,15 +5,15 @@ import {
     TouchableOpacity,
     Image,
     BackHandler,
+    StatusBar,
 } from "react-native";
 import styles from "./styles";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackIcon, BellIcon } from "../../assets/images";
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from "../../styles/colors";
 import { StackActions } from '@react-navigation/native';
 import ReviewModal from "../reviewModal/ReviewModal";
-// import Header from "../../components/header/Header";
 
 interface HeaderProps {
     title?: string;
@@ -34,17 +34,10 @@ const Header: React.FC<HeaderProps> = ({
     notificationCount = 0,
     notificationScreen = "Notifications",
 }) => {
-    // const handleBack = () => {
-    //     console.log("fdsfsd")
-    //     if (navigation.canGoBack()) {
-    //         navigation.dispatch(StackActions.pop(1));
-    //     } else {
-    //         BackHandler.exitApp(); // optional
-    //     }
-    // };
 
     const [showReviewModal, setShowReviewModal] =
         useState<boolean>(false);
+    const insets = useSafeAreaInsets();
 
     const onBackPress = () => {
         if (navigation.canGoBack()) {
@@ -88,11 +81,24 @@ const Header: React.FC<HeaderProps> = ({
 
     return (
         <>
-            <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0.2 }}
-                locations={[0, 0.6, 1]}
-                colors={[Colors.pinkCB, Colors.magenta, Colors.crimson]} style={styles.button}>
-                <SafeAreaView style={styles.safeArea}>
+            <StatusBar
+                barStyle="light-content"
+                backgroundColor="transparent"
+                translucent={true}
+            />
 
+            <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.2 }}
+                locations={[0, 0.6, 1]}
+                colors={[Colors.pinkCB, Colors.magenta, Colors.crimson]}
+                style={[styles.statusGradient, { height: insets.top + 60 }]}
+            />
+
+            <SafeAreaView edges={['top']} style={styles.safeArea}>
+                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0.2 }}
+                    locations={[0, 0.6, 1]}
+                    colors={[Colors.pinkCB, Colors.magenta, Colors.crimson]} style={styles.button}>
 
                     {/* BACK BUTTON */}
                     <View style={styles.container}>
@@ -111,10 +117,8 @@ const Header: React.FC<HeaderProps> = ({
                         {/* RIGHT SPACE (to balance layout) */}
                         <View style={styles.iconPlaceholder} />
                     </View>
-
-                </SafeAreaView>
-            </LinearGradient>
-
+                </LinearGradient>
+            </SafeAreaView>
 
             <ReviewModal
                 visible={showReviewModal}

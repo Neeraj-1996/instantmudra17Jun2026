@@ -6,12 +6,20 @@ import { Fonts, FontSize } from "../../styles/fonts";
 export default StyleSheet.create({
     safeArea: {
         width: "100%",
+        backgroundColor: "transparent",
+    },
+    statusGradient: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 0,
     },
     button: {
         height: moderateScale(60),
         width: "100%",
         flexDirection: "row",
-        paddingHorizontal: moderateScale(20),
+        paddingHorizontal: moderateScale(10),
         alignItems: 'center',
         justifyContent: 'center',
     },
