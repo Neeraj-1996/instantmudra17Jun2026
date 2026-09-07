@@ -286,11 +286,20 @@ export const submitLoanDocuments = createAsyncThunk(
                 file: any,
                 defaultType: string,
                 defaultName: string
-            ) => ({
-                uri: getUri(file.uri),
-                type: file.type || defaultType,
-                name: file.fileName || file.name || defaultName,
-            });
+            ) => {
+                const originalName = file.fileName || file.name || defaultName;
+
+                // Keep only letters, numbers, underscore, hyphen and dot
+                const sanitizedName = originalName
+                    .replace(/[^a-zA-Z0-9._-]/g, "_")
+                    .replace(/_+/g, "_").replace(/'/g, "");
+
+                return {
+                    uri: getUri(file.uri),
+                    type: file.type || defaultType,
+                    name: sanitizedName,
+                };
+            };
 
             formData.append("loan_amount", data.loanAmount.toString());
 

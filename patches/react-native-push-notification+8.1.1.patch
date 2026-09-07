@@ -1,0 +1,39 @@
+diff --git a/node_modules/react-native-push-notification/android/.gradle/5.6.4/fileChanges/last-build.bin b/node_modules/react-native-push-notification/android/.gradle/5.6.4/fileChanges/last-build.bin
+new file mode 100644
+index 0000000..f76dd23
+Binary files /dev/null and b/node_modules/react-native-push-notification/android/.gradle/5.6.4/fileChanges/last-build.bin differ
+diff --git a/node_modules/react-native-push-notification/android/.gradle/5.6.4/fileHashes/fileHashes.lock b/node_modules/react-native-push-notification/android/.gradle/5.6.4/fileHashes/fileHashes.lock
+new file mode 100644
+index 0000000..04ec4bd
+Binary files /dev/null and b/node_modules/react-native-push-notification/android/.gradle/5.6.4/fileHashes/fileHashes.lock differ
+diff --git a/node_modules/react-native-push-notification/android/.gradle/5.6.4/gc.properties b/node_modules/react-native-push-notification/android/.gradle/5.6.4/gc.properties
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/react-native-push-notification/android/build.gradle b/node_modules/react-native-push-notification/android/build.gradle
+index d6019f6..76ef524 100644
+--- a/node_modules/react-native-push-notification/android/build.gradle
++++ b/node_modules/react-native-push-notification/android/build.gradle
+@@ -2,7 +2,6 @@ buildscript {
+     repositories {
+         mavenCentral()
+         google()
+-        jcenter()
+     }
+     dependencies {
+         classpath 'com.android.tools.build:gradle:3.2.0'
+@@ -13,7 +12,6 @@ allprojects {
+     repositories {
+         mavenCentral()
+         google()
+-        jcenter()
+     }
+ }
+ 
+@@ -24,6 +22,7 @@ def safeExtGet(prop, fallback) {
+ }
+ 
+ android {
++    namespace "com.dieam.reactnativepushnotification"
+     compileSdkVersion safeExtGet('compileSdkVersion', 28)
+     buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
+ 
